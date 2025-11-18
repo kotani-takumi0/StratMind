@@ -51,8 +51,8 @@ def on_startup() -> None:
     """アプリ起動時に DecisionCase や類似度計算の初期化を行う。"""
 
     data_path = BASE_DIR / "data" / "decision_case.json"
-    cases = loader.load_decision_cases(data_path)
-    similarity.initialize_vectorizer(cases)
+    loader.load_decision_cases(data_path)
+    similarity.initialize_similarity()
 
 
 @app.get("/health")
@@ -73,17 +73,17 @@ def index(request: Request) -> object:
 def search_cases(idea: NewIdea) -> SearchCasesResponse:
     """NewIdea を受け取り、類似する DecisionCase を上位5件返す。"""
 
-    cases = similarity.search_similar_cases(idea, top_k=5)
+    scored_cases = similarity.search_similar_cases(idea, top_k=5)
 
     similar_cases: List[SimilarCase] = [
         SimilarCase(
-            id=c.id,
-            title=c.title,
-            status=c.status,
-            main_reason=c.main_reason,
-            tags=c.tags,
+            id=sc.case.id,
+            title=sc.case.title,
+            status=sc.case.status,
+            main_reason=sc.case.main_reason,
+            tags=sc.case.tags,
         )
-        for c in cases
+        for sc in scored_cases
     ]
 
     return SearchCasesResponse(similar_cases=similar_cases)

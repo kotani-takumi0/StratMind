@@ -1,63 +1,111 @@
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+from pydantic import BaseModel
 
 from app.models import DecisionCase, NewIdea
+from app.services.embeddings import embed_texts
+from app.services.loader import get_decision_cases
+from app.services.utils import normalize_rows
 
-_vectorizer: Optional[TfidfVectorizer] = None
-_case_matrix = None  # scipy.sparse matrix を想定（型は実行時に決まる）
-_cases: List[DecisionCase] = []
+CASES: list[DecisionCase] | None = None
+X_n: np.ndarray | None = None  # shape (N, D), L2 正規化済
 
 
-def initialize_vectorizer(cases: List[DecisionCase]) -> None:
-    """DecisionCase 一覧を元に TF-IDF ベクトル化器を初期化する。
+class ScoredDecisionCase(BaseModel):
+    case: DecisionCase
+    similarity: float
 
-    summary フィールドをベースにベクトル化する。
-    """
-    global _vectorizer, _case_matrix, _cases
 
-    _cases = list(cases)
+def build_case_text(case: DecisionCase) -> str:
+    parts = [
+        case.title,
+        case.summary,
+        "Tags: " + ", ".join(case.tags or []),
+        "Status: " + case.status,
+        "Main reason: " + (case.main_reason or ""),
+    ]
+    return "\n".join(parts)
 
-    if not _cases:
-        _vectorizer = None
-        _case_matrix = None
+
+def build_query_text(new_idea: NewIdea) -> str:
+    parts = [
+        new_idea.title,
+        new_idea.summary,
+        "Tags: " + ", ".join(new_idea.tags or []),
+    ]
+    return "\n".join(parts)
+
+
+def initialize_similarity() -> None:
+    """DecisionCase の埋め込み行列を作成し、正規化してキャッシュする。"""
+    global CASES, X_n
+
+    CASES = get_decision_cases()
+
+    if not CASES:
+        X_n = None
         return
 
-    summaries = [c.summary for c in _cases]
-    vectorizer = TfidfVectorizer()
-    matrix = vectorizer.fit_transform(summaries)
+    texts = [build_case_text(c) for c in CASES]
+    vecs = embed_texts(texts)
 
-    _vectorizer = vectorizer
-    _case_matrix = matrix
+    if vecs.size == 0:
+        X_n = None
+        return
+
+    X_n = normalize_rows(vecs)
 
 
-def search_similar_cases(new_idea: NewIdea, top_k: int = 5) -> List[DecisionCase]:
-    """NewIdea.summary をベースに類似 DecisionCase を検索する。
-
-    類似度（コサイン類似度）が高い順に top_k 件返す。
-    ベクトル化器が未初期化の場合や、ケースが無い場合は空リストを返す。
-    """
-    if _vectorizer is None or _case_matrix is None or not _cases:
+def analyze_similarity_cases(
+    query_vec: np.ndarray,
+    *,
+    topk: int = 5,
+) -> list[tuple[int, float]]:
+    """クエリベクトルと CASES の類似度を計算し、上位 topk 件を返す。"""
+    if X_n is None or X_n.size == 0:
         return []
 
-    query_vec = _vectorizer.transform([new_idea.summary])
+    Q_n = normalize_rows(query_vec)
+    scores = (Q_n @ X_n.T)[0]
 
-    # ベクトルが全てゼロの場合は有効な類似度が計算できない
-    if query_vec.nnz == 0:
+    n = scores.shape[0]
+    if n == 0:
         return []
 
-    similarities = cosine_similarity(query_vec, _case_matrix)[0]
-
-    k = max(0, min(top_k, len(_cases)))
-    if k == 0:
+    k = min(topk, n)
+    if k <= 0:
         return []
 
-    # 類似度の高い順にインデックスをソート
-    top_indices = similarities.argsort()[::-1][:k]
-    return [_cases[i] for i in top_indices]
+    # 上位 k 件のインデックスを argpartition で取得し、その部分だけを降順ソート
+    idx_part = np.argpartition(scores, -k)[-k:]
+    idx_sorted = idx_part[np.argsort(scores[idx_part])[::-1]]
+
+    return [(int(i), float(scores[i])) for i in idx_sorted]
 
 
-__all__ = ["initialize_vectorizer", "search_similar_cases"]
+def search_similar_cases(new_idea: NewIdea, top_k: int = 5) -> List[ScoredDecisionCase]:
+    """NewIdea を受け取り、類似 DecisionCase をスコア付きで返す。"""
+    if CASES is None or X_n is None:
+        raise Exception("initialize_similarity() が実行されていません。")
+
+    query_text = build_query_text(new_idea)
+    query_vec = embed_texts([query_text])
+
+    idx_scores = analyze_similarity_cases(query_vec, topk=top_k)
+
+    return [
+        ScoredDecisionCase(case=CASES[idx], similarity=score) for idx, score in idx_scores
+    ]
+
+
+__all__ = [
+    "ScoredDecisionCase",
+    "build_case_text",
+    "build_query_text",
+    "initialize_similarity",
+    "analyze_similarity_cases",
+    "search_similar_cases",
+]

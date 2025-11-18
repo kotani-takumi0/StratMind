@@ -6,35 +6,43 @@ from typing import List, Optional
 
 from app.models import DecisionCase
 
-_CASES: Optional[List[DecisionCase]] = None
+_CASES: list[DecisionCase] | None = None
 
 
-def load_decision_cases(path: Path) -> List[DecisionCase]:
-    """decision_case.json を読み込み、DecisionCase のリストとして返す。
+def load_decision_cases(path: Path | None = None) -> list[DecisionCase]:
+    """JSON ファイルから DecisionCase の一覧を読み込んでキャッシュする。
 
-    起動時に一度だけ呼び出されることを想定している。
-    2回目以降の呼び出しでは、キャッシュされた結果をそのまま返す。
+    - path が None の場合は、現在ファイルからの相対パスで
+      ../data/decision_case.json をデフォルトとする。
+    - すでに読み込まれている場合は再読み込みせず、キャッシュを返す。
     """
     global _CASES
 
     if _CASES is not None:
         return _CASES
 
+    if path is None:
+        services_dir = Path(__file__).resolve().parent
+        path = services_dir.parent / "data" / "decision_case.json"
+
     with path.open("r", encoding="utf-8") as f:
         raw_data = json.load(f)
 
-    # JSON は DecisionCase の配列を前提とする
     _CASES = [DecisionCase(**item) for item in raw_data]
     return _CASES
 
 
-def get_decision_cases() -> List[DecisionCase]:
-    """キャッシュされている DecisionCase 一覧を返す。
+def get_decision_cases() -> list[DecisionCase]:
+    """キャッシュされた DecisionCase の一覧を返す。
 
-    起動時に load_decision_cases() が呼ばれている前提。
+    - 未ロードの場合は load_decision_cases() を内部で呼び出す。
     """
+    global _CASES
+
     if _CASES is None:
-        raise RuntimeError("Decision cases are not loaded. Call load_decision_cases() first.")
+        load_decision_cases()
+
+    assert _CASES is not None
     return _CASES
 
 
