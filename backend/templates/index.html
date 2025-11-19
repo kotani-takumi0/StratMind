@@ -2,333 +2,129 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <title>新規事業自己レビューツール</title>
+    <title>StratMind - 新規事業企画の自己レビュー</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        background-color: #f5f5f7;
-      }
-
-      .page-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 16px;
-      }
-
-      h1 {
-        margin-bottom: 8px;
-      }
-
-      #global-message {
-        margin-bottom: 16px;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 14px;
-        display: none;
-      }
-
-      #global-message.message--success {
-        display: block;
-        background-color: #e6f4ea;
-        color: #1e7b34;
-        border: 1px solid #a5d6a7;
-      }
-
-      #global-message.message--error {
-        display: block;
-        background-color: #ffebee;
-        color: #c62828;
-        border: 1px solid #ef9a9a;
-      }
-
-      #global-message.message--info {
-        display: block;
-        background-color: #e3f2fd;
-        color: #1565c0;
-        border: 1px solid #90caf9;
-      }
-
-      .layout {
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-      }
-
-      .column {
-        background-color: #ffffff;
-        padding: 12px;
-        border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-      }
-
-      .column-left {
-        flex: 0 0 32%;
-      }
-
-      .column-middle {
-        flex: 0 0 36%;
-      }
-
-      .column-right {
-        flex: 0 0 32%;
-      }
-
-      @media (max-width: 960px) {
-        .layout {
-          flex-direction: column;
-        }
-
-        .column-left,
-        .column-middle,
-        .column-right {
-          flex: 1 1 auto;
-        }
-      }
-
-      form#new-idea-form label {
-        display: block;
-        font-size: 13px;
-        font-weight: 600;
-        margin-top: 8px;
-        margin-bottom: 4px;
-      }
-
-      form#new-idea-form input[type="text"],
-      form#new-idea-form textarea {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 6px 8px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        font-size: 13px;
-      }
-
-      form#new-idea-form textarea {
-        min-height: 60px;
-        resize: vertical;
-      }
-
-      .button-primary {
-        margin-top: 12px;
-        padding: 8px 12px;
-        border-radius: 4px;
-        border: none;
-        background-color: #1976d2;
-        color: #ffffff;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      .button-primary:disabled {
-        opacity: 0.7;
-        cursor: default;
-      }
-
-      #questions-section {
-        min-height: 80px;
-        font-size: 14px;
-      }
-
-      .question-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        padding: 8px;
-        margin-bottom: 8px;
-        background-color: #fafafa;
-      }
-
-      .question-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 4px;
-        font-size: 12px;
-        color: #555;
-      }
-
-      .question-layer {
-        font-weight: 700;
-      }
-
-      .question-text {
-        margin: 4px 0 6px;
-        font-size: 14px;
-      }
-
-      .related-cases {
-        margin-bottom: 6px;
-      }
-
-      .related-cases button {
-        margin-right: 4px;
-        margin-bottom: 4px;
-        padding: 2px 6px;
-        font-size: 11px;
-      }
-
-      .feedback-controls {
-        border-top: 1px dashed #ddd;
-        padding-top: 4px;
-        margin-top: 4px;
-        font-size: 12px;
-      }
-
-      .feedback-controls label {
-        display: block;
-        margin-bottom: 4px;
-      }
-
-      .feedback-controls select,
-      .feedback-controls textarea {
-        width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 4px;
-      }
-
-      .feedback-controls textarea {
-        min-height: 40px;
-        resize: vertical;
-      }
-
-      #submit-feedback-btn {
-        margin-top: 12px;
-        width: 100%;
-      }
-
-      #cases-section {
-        min-height: 80px;
-        font-size: 14px;
-      }
-
-      .case-card {
-        border: 1px solid #e0e0e0;
-        border-radius: 4px;
-        padding: 8px;
-        margin-bottom: 8px;
-        background-color: #ffffff;
-      }
-
-      .case-title {
-        margin: 0 0 4px;
-        font-size: 14px;
-      }
-
-      .case-status {
-        display: inline-block;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 10px;
-        background-color: #eeeeee;
-        margin-bottom: 4px;
-      }
-
-      .case-tags {
-        font-size: 11px;
-        color: #555;
-        margin-bottom: 4px;
-      }
-
-      .case-summary {
-        font-size: 13px;
-        margin-bottom: 6px;
-      }
-
-      .case-detail-btn {
-        font-size: 12px;
-        padding: 4px 8px;
-      }
-
-      #case-detail-modal {
-        margin-top: 12px;
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        background-color: #fafafa;
-        font-size: 13px;
-      }
-
-      #case-detail-modal h3 {
-        margin-top: 0;
-        margin-bottom: 4px;
-        font-size: 14px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='/css/style.css') }}"
+    />
   </head>
   <body>
-    <div class="page-container">
-      <h1>新規事業企画の自己レビュー</h1>
-      <p>企画案を入力し、過去の意思決定ケースから生成された問いで自己レビューを行います。</p>
-
-      <div id="global-message"></div>
-
-      <div class="layout">
-        <!-- 左カラム: NewIdea フォーム -->
-        <div class="column column-left">
-          <h2>1. 企画案の入力</h2>
-          <form id="new-idea-form">
-            <label for="idea-title">企画名</label>
-            <input id="idea-title" type="text" placeholder="例: 中小製造業向け設備保全ダッシュボード" />
-
-            <label for="idea-purpose">目的・課題</label>
-            <textarea id="idea-purpose" placeholder="この企画で解決したい課題や背景を記入してください。"></textarea>
-
-            <label for="idea-target">対象ユーザー</label>
-            <textarea id="idea-target" placeholder="想定ターゲットとなるユーザーや顧客セグメントを記入してください。"></textarea>
-
-            <label for="idea-value">提供価値・ユースケース</label>
-            <textarea id="idea-value" placeholder="ユーザーにどのような価値・体験を提供するのか、具体的なユースケースと合わせて記入してください。"></textarea>
-
-            <label for="idea-model">収益モデル・ビジネスモデル</label>
-            <textarea id="idea-model" placeholder="料金体系やマネタイズの想定、主要な前提条件などを記入してください。"></textarea>
-
-            <label for="idea-memo">その他メモ・前提</label>
-            <textarea id="idea-memo" placeholder="検討状況や前提条件、気になっている論点などがあれば自由に記入してください。"></textarea>
-
-            <label for="idea-tags">タグ（カンマ区切り）</label>
-            <input id="idea-tags" type="text" placeholder="例: B2B,SaaS,製造業" />
-
-            <button id="start-review-btn" type="submit" class="button-primary">
-              この企画で自己レビューを始める
-            </button>
-          </form>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="app-header__left">
+          <h1 class="app-title">StratMind</h1>
+          <p class="app-subtitle">新規事業企画の自己レビュー・ワークスペース</p>
         </div>
-
-        <!-- 中央カラム: 問いリスト -->
-        <div class="column column-middle">
-          <h2>2. 自己レビューの問い</h2>
-          <div id="questions-section">
-            まだ自己レビューは開始されていません。左のフォームから企画案を入力し、「この企画で自己レビューを始める」を押してください。
-          </div>
-          <button
-            id="submit-feedback-btn"
-            type="button"
-            class="button-primary"
-          >
-            評価を送信
+        <div class="app-header__right">
+          <button id="update-review-btn" class="button button--primary">
+            AIレビューを更新する
           </button>
         </div>
+      </header>
 
-        <!-- 右カラム: 類似 DecisionCase 一覧 -->
-        <div class="column column-right">
-          <h2>3. 類似する過去の意思決定ケース</h2>
-          <div id="cases-section">
-            まだ類似ケースは表示されていません。企画案を送信すると、関連しそうなケースがここに表示されます。
+      <main class="app-main">
+        <!-- Left Pane: Editor -->
+        <section class="pane pane--left" aria-label="企画エディタ">
+          <header class="pane-header">
+            <h2 class="pane-title">企画エディタ</h2>
+            <p class="pane-description">
+              タイトルと企画書本文を自由に編集しながら、右側のAIレビューと往復してください。
+            </p>
+          </header>
+          <div class="editor">
+            <div class="editor-field">
+              <label for="idea-title" class="editor-label">企画タイトル</label>
+              <input
+                id="idea-title"
+                class="editor-input"
+                type="text"
+                placeholder="例：中小製造業向け設備保全ダッシュボード"
+              />
+            </div>
+            <div class="editor-field editor-field--grow">
+              <label for="idea-body" class="editor-label">
+                企画書本文
+                <span class="editor-label__hint">
+                  課題・提供価値・ターゲット・ビジネスモデルなどを自由に書き出してください。
+                </span>
+              </label>
+              <textarea
+                id="idea-body"
+                class="editor-textarea"
+                placeholder="ここに企画の背景、狙い、ユーザー像、ユースケース、収益モデルなどを記述します。右側の問いをもとにどんどん追記・修正していきましょう。"
+              ></textarea>
+            </div>
+          </div>
+        </section>
+
+        <!-- Right Pane: Review Assistant -->
+        <section class="pane pane--right" aria-label="レビューアシスタント">
+          <header class="pane-header">
+            <h2 class="pane-title">レビューアシスタント</h2>
+            <p class="pane-description">
+              企画内容に基づいてAIが問いや参考ケースを提示します。気づきは左側の企画書に反映してください。
+            </p>
+          </header>
+
+          <!-- Global message / status -->
+          <div id="global-message" class="global-message" role="status" aria-live="polite"></div>
+
+          <!-- Tabs -->
+          <div class="tabs" role="tablist" aria-label="レビュータブ">
+            <button
+              id="tab-questions"
+              class="tab tab--active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-questions"
+            >
+              Review Questions
+            </button>
+            <button
+              id="tab-cases"
+              class="tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-cases"
+            >
+              Reference Cases
+            </button>
           </div>
 
-          <div id="case-detail-modal">
-            ケースの詳細を表示するには、一覧の「詳細を見る」ボタンをクリックしてください。
+          <!-- Tab Panels -->
+          <div class="tab-panels">
+            <section
+              id="panel-questions"
+              class="tab-panel tab-panel--active"
+              role="tabpanel"
+              aria-labelledby="tab-questions"
+            >
+              <div id="questions-list" class="cards-list cards-list--questions">
+                <p class="placeholder-text">
+                  まだレビューは実行されていません。上部の「AIレビューを更新する」ボタンを押すと、企画内容に基づいた問いがここに表示されます。
+                </p>
+              </div>
+            </section>
+
+            <section
+              id="panel-cases"
+              class="tab-panel"
+              role="tabpanel"
+              aria-labelledby="tab-cases"
+              hidden
+            >
+              <div id="cases-list" class="cards-list cards-list--cases">
+                <p class="placeholder-text">
+                  まだ参考ケースは読み込まれていません。AIレビューを実行すると、類似する過去の意思決定ケースがここに表示されます。
+                </p>
+              </div>
+            </section>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
 
-    <script
-      src="{{ url_for('static', path='/js/app.js') }}"
-      defer
-    ></script>
+    <script src="{{ url_for('static', path='/js/app.js') }}" defer></script>
   </body>
 </html>
