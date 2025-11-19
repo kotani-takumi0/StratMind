@@ -1,81 +1,109 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List
 from uuid import uuid4
 
-from app.models import (
-    DecisionCase,
-    FeedbackRequest,
-    NewIdea,
-    Question,
-)
+from app.models import NewIdea, Question, QuestionFeedback
 
 
-LOG_DIR = Path(__file__).resolve().parent.parent / "logs"
+def _get_log_root_dir() -> Path:
+    """ログのルートディレクトリ (backend/app/logs) を返す。"""
+
+    return Path(__file__).resolve().parent.parent / "logs"
 
 
-def _ensure_log_dir() -> None:
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
+def _get_log_dir() -> Path:
+    """実際にセッションログを保存するディレクトリ (logs/logs) を返す。"""
+
+    return _get_log_root_dir() / "logs"
 
 
-def create_session_log(
-    idea: NewIdea,
-    similar_cases: List[DecisionCase],
-    questions: List[Question],
-) -> str:
-    """新しいセッションログを作成し、ファイルに保存する。
+def _ensure_log_dir() -> Path:
+    """ログディレクトリを作成し、その Path を返す。"""
 
-    仕様は 00_context.md の「9. ログ設計」に準拠する。
+    log_dir = _get_log_dir()
+    log_dir.mkdir(parents=True, exist_ok=True)
+    return log_dir
+
+
+def _get_log_path(session_id: str) -> Path:
+    """セッションIDからログファイルのパスを生成する。"""
+
+    return _get_log_dir() / f"session_{session_id}.json"
+
+
+def _now_iso_utc() -> str:
+    """現在時刻（UTC）の ISO8601 文字列を返す。"""
+
+    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def create_session_log(new_idea: NewIdea, questions: List[Question]) -> str:
+    """新しい自己レビューセッションのログファイルを作成する。
+
+    ログスキーマは 04_logging_service_prompt.md に準拠し、
+    評価指標A/Bおよびサブ指標 (2-1, 2-2, 3-1, 3-2, 3-3, 4-1, 4-2) と 1:1 で対応する。
     """
 
     _ensure_log_dir()
 
     session_id = str(uuid4())
-    created_at = datetime.utcnow().isoformat() + "Z"
+    created_at = _now_iso_utc()
 
     data = {
         "session_id": session_id,
         "created_at": created_at,
-        "new_idea": idea.dict(),
-        "similar_cases": [
-            {"id": c.id, "title": c.title} for c in similar_cases
-        ],
+        "new_idea": new_idea.dict(),
         "questions": [q.dict() for q in questions],
+        # 評価指標A (2-1, 2-2): 問いごとの有用性・行動変化
         "feedbacks": [],
+        # 評価指標B (3-1, 3-2, 3-3): 体験の有効性・再利用意向・質の向上感
+        "session_evaluation": {
+            "experience_score": None,
+            "reuse_intent_score": None,
+            "perceived_quality_gain_score": None,
+        },
+        # サブ指標 (4-1, 4-2): クリックやメモなどのインタラクションログ
+        "interaction_logs": [],
+        "session_times": {
+            "started_at": created_at,
+            "ended_at": None,
+        },
     }
 
-    path = LOG_DIR / f"session_{session_id}.json"
+    path = _get_log_path(session_id)
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     return session_id
 
 
-def append_feedback(session_id: str, feedback_request: FeedbackRequest) -> int:
-    """指定セッションのログファイルにフィードバックを追記する。
+def append_feedback(session_id: str, feedbacks: List[QuestionFeedback]) -> None:
+    """指定セッションの feedbacks を上書き保存する。
 
-    セッションが存在しない場合は FileNotFoundError を送出する。
+    - ファイルが存在しない場合は FileNotFoundError を送出。
+    - JSON パースに失敗した場合は ValueError を送出。
+    - feedbacks フィールドのみを更新し、他フィールドは変更しない。
     """
 
     _ensure_log_dir()
-    path = LOG_DIR / f"session_{session_id}.json"
+    path = _get_log_path(session_id)
     if not path.exists():
         raise FileNotFoundError(f"session log not found: {session_id}")
 
-    with path.open("r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON log for session: {session_id}") from exc
 
-    feedbacks = data.get("feedbacks") or []
-    feedbacks.extend([fb.dict() for fb in feedback_request.feedbacks])
-    data["feedbacks"] = feedbacks
+    data["feedbacks"] = [fb.dict() for fb in feedbacks]
 
     with path.open("w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-
-    return len(feedback_request.feedbacks)
 
 
 __all__ = ["create_session_log", "append_feedback"]

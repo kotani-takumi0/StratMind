@@ -103,11 +103,7 @@ def generate_questions(request_body: GenerateQuestionsRequest) -> GenerateQuesti
         request_body.idea, selected_cases
     )
 
-    session_id = logging_service.create_session_log(
-        request_body.idea,
-        selected_cases,
-        questions,
-    )
+    session_id = logging_service.create_session_log(request_body.idea, questions)
 
     return GenerateQuestionsResponse(session_id=session_id, questions=questions)
 
@@ -117,11 +113,11 @@ def submit_feedback(session_id: str, body: FeedbackRequest) -> FeedbackResponse:
     """指定セッションに対するフィードバックを保存する。"""
 
     try:
-        saved_count = logging_service.append_feedback(session_id, body)
+        logging_service.append_feedback(session_id, body.feedbacks)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    return FeedbackResponse(session_id=session_id, saved_count=saved_count)
+    return FeedbackResponse(session_id=session_id, saved_count=len(body.feedbacks))
 
 
 # 実行例:
