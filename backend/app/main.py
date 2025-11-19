@@ -99,9 +99,8 @@ def generate_questions(request_body: GenerateQuestionsRequest) -> GenerateQuesti
         c for c in all_cases if c.id in set(request_body.similar_case_ids)
     ]
 
-    questions: List[Question] = question_generator.generate_questions(
-        request_body.idea,
-        selected_cases,
+    questions, meta = question_generator.generate_questions(
+        request_body.idea, selected_cases
     )
 
     session_id = logging_service.create_session_log(

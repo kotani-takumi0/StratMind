@@ -29,12 +29,26 @@ class NewIdea(BaseModel):
 
 
 class Question(BaseModel):
-    """生成される問い。"""
+    """生成される問い（3レイヤーモデル対応）。"""
 
-    id: str
-    text: str
+    id: str  # セッション内で一意なID（"q1" など）
     layer: int  # 1, 2, 3 のいずれか
-    source_case_ids: List[str] = Field(default_factory=list)
+    theme: str  # purpose_kpi, target_scope, execution, finance, risk, differentiation など
+    question: str  # ユーザーに表示する問い本文（日本語）
+    based_on_case_ids: List[str] = Field(default_factory=list)
+    risk_type: str  # market_size, cannibalization, execution_capacity, regulation, generic_check など
+    priority: int  # 1〜3（3が最優先）
+    note_for_admin: str  # 「なぜこの問いを出したのか」のメモ（ユーザーには非表示）
+
+
+class QuestionGenerationMeta(BaseModel):
+    """問い生成セッション単位のメタ情報。"""
+
+    num_questions: int
+    layer1_count: int
+    layer2_count: int
+    layer3_count: int
+    comment: str
 
 
 class QuestionFeedback(BaseModel):
@@ -83,6 +97,7 @@ __all__ = [
     "DecisionCase",
     "NewIdea",
     "Question",
+    "QuestionGenerationMeta",
     "QuestionFeedback",
     "SimilarCase",
     "SearchCasesResponse",
