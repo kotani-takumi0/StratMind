@@ -3,10 +3,10 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import List
 
-from pydantic import BaseSettings
+from pydantic import BaseModel
 
 
-class Settings(BaseSettings):
+class Settings(BaseModel):
     """PoC 用のシンプルな設定クラス。
 
     将来的に LLM のAPIキーやその他設定値もここに集約する想定。

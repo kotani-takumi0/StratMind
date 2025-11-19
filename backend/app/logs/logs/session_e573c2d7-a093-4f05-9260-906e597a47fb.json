@@ -1,0 +1,64 @@
+{
+  "session_id": "e573c2d7-a093-4f05-9260-906e597a47fb",
+  "created_at": "2025-11-19T03:12:17.324915Z",
+  "new_idea": {
+    "title": "dafkl",
+    "summary": "【目的・課題】\nｄｆｓｊｋｐ\n\n【対象ユーザー】\nkdlfa\n\n【提供価値・ユースケース】\ndsklaf;\n\n【収益モデル・ビジネスモデル】\nfkdlsa;\n\n【その他メモ・前提】\nfkdsl;a",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画の最終的な目的と成功指標（KPI）を、誰にどんな変化を起こすのかという観点で一文で説明してください。",
+      "based_on_case_ids": [
+        "DC-004",
+        "DC-002",
+        "DC-001"
+      ],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "LLM出力のパースに失敗したため、Layer1テンプレートから生成されたフォールバック質問です。"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "この企画の主な対象ユーザーと、あえて対象外とするユーザーを、具体的な属性や利用シーンとセットで書き分けてください。",
+      "based_on_case_ids": [
+        "DC-004",
+        "DC-002",
+        "DC-001"
+      ],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "LLM出力のパースに失敗したため、Layer1テンプレートから生成されたフォールバック質問です。"
+    },
+    {
+      "id": "q3",
+      "layer": 1,
+      "theme": "execution",
+      "question": "日常運用の責任者と必要なロール（部署・役割）を挙げ、現状の体制でどこが特に弱いかを説明してください。",
+      "based_on_case_ids": [
+        "DC-004",
+        "DC-002",
+        "DC-001"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "LLM出力のパースに失敗したため、Layer1テンプレートから生成されたフォールバック質問です。"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-11-19T03:12:17.324915Z",
+    "ended_at": null
+  }
+}

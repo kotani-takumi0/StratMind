@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
 
 from .config import get_settings
 from .models import (
@@ -46,12 +47,54 @@ app.mount(
 )
 
 
+class NewIdeaForm(BaseModel):
+    """フロントエンドのフォーム構造に対応する NewIdea 入力用モデル。"""
+
+    title: str
+    purpose: str
+    target: str
+    value: str
+    model: str
+    memo: str
+
+
+class ReviewSessionCreateRequest(BaseModel):
+    """POST /api/review_sessions のリクエストボディ。"""
+
+    new_idea: NewIdeaForm
+    tags: List[str] = []
+
+
+class ReviewSessionCreateResponse(BaseModel):
+    """POST /api/review_sessions のレスポンスボディ。"""
+
+    session_id: str
+    new_idea: NewIdea
+    questions: List[Question]
+    similar_cases: List[DecisionCase]
+
+
+class QuestionFeedbackV2(BaseModel):
+    """フロントエンドのフィードバック形式に対応したモデル。"""
+
+    question_id: str
+    usefulness_score: Optional[int] = None  # 1〜5（未選択は null）
+    applied: bool
+    note: str = ""
+
+
+class ReviewSessionFeedbackRequest(BaseModel):
+    """POST /api/review_sessions/{session_id}/feedback のリクエストボディ。"""
+
+    feedbacks: List[QuestionFeedbackV2]
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     """アプリ起動時に DecisionCase や類似度計算の初期化を行う。"""
 
-    data_path = BASE_DIR / "data" / "decision_case.json"
-    loader.load_decision_cases(data_path)
+    # デフォルトパス (services/loader.py からの相対パス ../data/decision_case.json) を利用してロード
+    loader.load_decision_cases()
     similarity.initialize_similarity()
 
 
@@ -118,6 +161,97 @@ def submit_feedback(session_id: str, body: FeedbackRequest) -> FeedbackResponse:
         raise HTTPException(status_code=404, detail="Session not found")
 
     return FeedbackResponse(session_id=session_id, saved_count=len(body.feedbacks))
+
+
+@app.post("/api/review_sessions", response_model=ReviewSessionCreateResponse)
+def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionCreateResponse:
+    """フロントエンド用の自己レビューセッション作成エンドポイント。
+
+    - NewIdeaForm を内部の NewIdea に変換
+    - 類似ケース検索
+    - 問い生成
+    - セッションログ作成
+    をまとめて実行し、1つのレスポンスとして返す。
+    """
+
+    form = payload.new_idea
+
+    # NewIdea.summary を複数フィールドから組み立てる
+    summary_parts = [
+        f"【目的・課題】\n{form.purpose}",
+        f"【対象ユーザー】\n{form.target}",
+        f"【提供価値・ユースケース】\n{form.value}",
+        f"【収益モデル・ビジネスモデル】\n{form.model}",
+        f"【その他メモ・前提】\n{form.memo}",
+    ]
+    summary = "\n\n".join(summary_parts)
+
+    new_idea = NewIdea(
+        title=form.title,
+        summary=summary,
+        tags=payload.tags or [],
+    )
+
+    # 類似ケース検索
+    scored_cases = similarity.search_similar_cases(new_idea, top_k=5)
+    similar_cases: List[DecisionCase] = [sc.case for sc in scored_cases]
+
+    # 問い生成（上位類似ケースを渡す）
+    questions, meta = question_generator.generate_questions(new_idea, similar_cases)
+
+    # セッションログ作成
+    session_id = logging_service.create_session_log(new_idea, questions)
+
+    return ReviewSessionCreateResponse(
+        session_id=session_id,
+        new_idea=new_idea,
+        questions=questions,
+        similar_cases=similar_cases,
+    )
+
+
+@app.post("/api/review_sessions/{session_id}/feedback")
+def create_review_session_feedback(
+    session_id: str,
+    body: ReviewSessionFeedbackRequest,
+) -> dict:
+    """フロントエンド用のフィードバック保存エンドポイント。
+
+    QuestionFeedbackV2 を内部の QuestionFeedback モデルに変換して保存する。
+    """
+
+    from .models import QuestionFeedback  # 循環 import を避けるためローカル import
+
+    # V2 形式 → 既存の QuestionFeedback 形式に変換
+    converted: List[QuestionFeedback] = []
+    for fb in body.feedbacks:
+        converted.append(
+            QuestionFeedback(
+                question_id=fb.question_id,
+                helpful_score=fb.usefulness_score or 0,
+                modified_idea=fb.applied,
+                comment=fb.note or None,
+            )
+        )
+
+    try:
+        logging_service.append_feedback(session_id, converted)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    return {"ok": True}
+
+
+@app.get("/api/decision_cases/{case_id}")
+def get_decision_case(case_id: str) -> DecisionCase:
+    """ID で指定された DecisionCase の詳細を返すエンドポイント。"""
+
+    cases = loader.get_decision_cases()
+    for c in cases:
+        if c.id == case_id:
+            return c
+
+    raise HTTPException(status_code=404, detail="DecisionCase not found")
 
 
 # 実行例:

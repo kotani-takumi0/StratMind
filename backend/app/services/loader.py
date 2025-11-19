@@ -23,7 +23,8 @@ def load_decision_cases(path: Path | None = None) -> list[DecisionCase]:
 
     if path is None:
         services_dir = Path(__file__).resolve().parent
-        path = services_dir.parent / "data" / "decision_case.json"
+        # backend/app/services/ から 2つ上に上がって backend/ を起点に data/decision_case.json を探す
+        path = services_dir.parent.parent / "data" / "decision_case.json"
 
     with path.open("r", encoding="utf-8") as f:
         raw_data = json.load(f)
