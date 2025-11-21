@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 import json
 from typing import Any, Tuple
 
 from dotenv import load_dotenv
-from openai import OpenAI
 from pydantic import BaseModel, ValidationError
+
+from google.genai import types
 
 from app.models import (
     DecisionCase,
@@ -14,9 +16,9 @@ from app.models import (
     QuestionGenerationMeta,
 )
 
-load_dotenv()
-_client = OpenAI()
+from .aimodel import OpenAI, genai, get_ai_client
 
+load_dotenv()
 
 # Layer1 用のベース質問テンプレート
 BASE_QUESTIONS_LAYER1: list[dict[str, str]] = [
@@ -157,21 +159,71 @@ def build_user_message(
 
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
-
 def call_llm(system_prompt: str, user_message: str) -> LLMQuestionsPayload:
     """OpenAI Responses API を呼び出し、JSON をパースして内部モデルに変換する。"""
 
-    res = _client.responses.create(
-        model="gpt-4.1-mini",
-        input=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message},
-        ],
-        response_format={"type": "json_object"},
-    )
+    _client = get_ai_client()
+    content = ""
+
+    if isinstance(_client, OpenAI):
+        res = _client.responses.create(
+            model="gpt-4.1-mini",
+            input=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message},
+            ],
+            response_format={"type": "json_object"},
+        )
+        content = res.output_text
+
+    elif isinstance(_client, genai.Client):
+        # Gemini (gemini-2.5-flash) の処理
+        
+        # LLMQuestionsPayloadをJSONスキーマとして定義（Pydanticモデルから自動生成も可能だが、ここでは手動）
+        # この処理は、本来はモジュール読み込み時に一度だけ行うべき
+        questions_schema = types.Schema(
+            type=types.Type.ARRAY,
+            items=types.Schema(
+                type=types.Type.OBJECT,
+                properties={
+                    "id": types.Schema(type=types.Type.STRING),
+                    "layer": types.Schema(type=types.Type.INTEGER),
+                    # ... (LLMQuestionItemの全てのフィールドを定義する必要がある)
+                }
+            )
+        )
+        
+        meta_schema = types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "num_questions": types.Schema(type=types.Type.INTEGER),
+                # ... (QuestionGenerationMetaの全てのフィールドを定義する必要がある)
+            }
+        )
+        
+        # 最終的なトップレベルのスキーマ
+        response_schema = types.Schema(
+            type=types.Type.OBJECT,
+            properties={
+                "questions": questions_schema,
+                "meta": meta_schema
+            },
+            required=["questions", "meta"]
+        )
+
+        # Gemini APIコール
+        res = _client.models.generate_content(
+            model="gemini-2.5-flash", # 使用するGeminiモデルを指定
+            contents=[types.Content(role="user", parts=[types.Part.from_text(user_message)])],
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt, # システムプロンプトはconfigで渡す
+                response_mime_type="application/json",
+                response_schema=response_schema
+            ),
+        )
+        content = res.text # Geminiの出力は .text プロパティ
 
     # output_text プロパティから JSON 文字列を取得する前提
-    content = res.output_text
     raw = json.loads(content)
     return LLMQuestionsPayload.model_validate(raw)
 
