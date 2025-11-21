@@ -5,9 +5,9 @@ import json
 from typing import Any, Tuple
 
 from dotenv import load_dotenv
-from openai import OpenAI
 from pydantic import BaseModel, ValidationError
-from google import genai
+
+from google.genai import types
 
 from app.models import (
     DecisionCase,
@@ -15,6 +15,8 @@ from app.models import (
     Question,
     QuestionGenerationMeta,
 )
+
+from .aimodel import OpenAI, genai, get_ai_client
 
 load_dotenv()
 
@@ -157,28 +159,6 @@ def build_user_message(
 
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
-# 2025/11/20 add ---
-def get_ai_client() -> OpenAI | genai.Client:
-    """
-    FastAPI起動時に、APIキーの有無に基づいて使用するAIクライアントを選択する関数
-    """
-    openai_key = os.getenv("OPENAI_API_KEY")
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    
-    # デフォルトはOpenAI
-    if openai_key:
-        return OpenAI()
-    
-    # OpenAIキーがない場合、Geminiキーの有無を確認
-    elif gemini_key:
-        print("OpenAI APIキーがないため、Gemini API (2.5 Flash) を使用します。")
-        return genai.Client()
-    
-    # どちらのキーもない場合
-    else:
-        raise ValueError("AIサービスのAPIキーが設定されていません。")
-# ---
-
 def call_llm(system_prompt: str, user_message: str) -> LLMQuestionsPayload:
     """OpenAI Responses API を呼び出し、JSON をパースして内部モデルに変換する。"""
 
@@ -197,7 +177,7 @@ def call_llm(system_prompt: str, user_message: str) -> LLMQuestionsPayload:
         content = res.output_text
 
     elif isinstance(_client, genai.Client):
-        # 2. Gemini (gemini-2.5-flash) の処理
+        # Gemini (gemini-2.5-flash) の処理
         
         # LLMQuestionsPayloadをJSONスキーマとして定義（Pydanticモデルから自動生成も可能だが、ここでは手動）
         # この処理は、本来はモジュール読み込み時に一度だけ行うべき
