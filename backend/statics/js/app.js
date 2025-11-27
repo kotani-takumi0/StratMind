@@ -252,7 +252,7 @@
         title: titleInput.value,
         content: bodyTextarea.value,
       },
-      is_domo: true
+      is_demo: true
     };
 
     try{
