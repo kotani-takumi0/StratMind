@@ -16,7 +16,8 @@ from app.models import (
     QuestionGenerationMeta,
 )
 
-from .aimodel import OpenAI, genai, get_ai_client
+from app.services.aimodel import OpenAI, genai, get_ai_client
+from app.services.loader import load_demo_questions
 
 load_dotenv()
 
@@ -312,6 +313,24 @@ def generate_questions(
         layer2_count=sum(1 for q in questions if q.layer == 2),
         layer3_count=sum(1 for q in questions if q.layer == 3),
         comment=payload.meta.comment,
+    )
+
+    return questions, meta
+
+    # 11/27 add: questionsのデモを生成
+def generate_demo_questions() -> Tuple[list[Question], QuestionGenerationMeta]:
+    
+    questions: list[Question] = []
+    
+    # questionsのjsonを読み込む
+    questions = load_demo_questions()
+
+    meta = QuestionGenerationMeta(
+        num_questions=len(questions),
+        layer1_count=sum(1 for q in questions if q.layer == 1),
+        layer2_count=sum(1 for q in questions if q.layer == 2),
+        layer3_count=sum(1 for q in questions if q.layer == 3),
+        comment="comment dummy",
     )
 
     return questions, meta

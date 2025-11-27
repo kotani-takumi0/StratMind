@@ -249,21 +249,38 @@
     //送信データ作成
     const sendData = {
       new_idea: {
-        title: titleInput.value,
-        content: bodyTextarea.value,
+        title: titleInput ? titleInput.value : "",
+        content: bodyTextarea ? bodyTextarea.value : "",
+        // 受け取るpydantic側と合わせないといけないので、今はとりあえずから文字とした
+        purpose: "",
+        target: "",
+        value: "",
+        model: "",
+        memo: ""
       },
       is_demo: true
     };
 
     try{
       //常に同じURLへPOSTする
-      const response = await fetch("http://localhost:8000/api/reveiew_sessions",{
+      const response = await fetch("http://localhost:8000/api/review_sessions",{
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify(sendData)
       });
 
+      // うまく送れなかったとき
+      if (!response.ok){
+        throw new Error(`HTTP error!\n status: ${response.status}`);
+      }
+
       const result = await response.json();
+      return result;
+    }
+    catch (error) {
+      console.error("エラーが発生しました:", error);
+      alert("送信に失敗しました");
+      return null;
     }
   }
 
@@ -324,7 +341,8 @@
     ];
   }
 
-  function runReview() {
+  // 11/26 add: 非同期処理化(createIdeasが非同期処理なので)
+  async function runReview() {
     const titleInput = document.getElementById("idea-title");
     const bodyTextarea = document.getElementById("idea-body");
     const title = titleInput ? titleInput.value.trim() : "";
@@ -337,7 +355,13 @@
     // const questions = buildQuestions(title, body);
     //  const cases = buildCases();
 
-    const idea = createIdeas();
+    const responceData = await createIdeas();
+
+    // エラーなどでnullが帰ってきた場合中断
+    if (!responceData)  return;
+
+    // 分離
+    const { questions, cases } = responceData;
 
     renderQuestions(questions);
     renderCases(cases);
