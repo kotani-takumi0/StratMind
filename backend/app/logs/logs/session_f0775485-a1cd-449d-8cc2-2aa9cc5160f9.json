@@ -1,0 +1,96 @@
+{
+  "session_id": "f0775485-a1cd-449d-8cc2-2aa9cc5160f9",
+  "created_at": "2025-11-27T14:21:33.280769Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【目的・課題】\n\n\n【対象ユーザー】\n\n\n【提供価値・ユースケース】\n\n\n【収益モデル・ビジネスモデル】\n\n\n【その他メモ・前提】\n",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画がターゲット顧客の「具体的などのような困りごと」を解決し、その結果として「どのような状態」を実現したいのか、その定量的な成功指標と合わせて説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "clarity_of_purpose",
+      "priority": 1,
+      "note_for_admin": "企画の基本的な目的とKPIの明確さを問う。"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "execution",
+      "question": "この企画を実際に提供・運用していく上で、特に重要となる専門性や必要な役割は何ですか？また、それらをどのように確保し、持続的な体制を構築する計画ですか？",
+      "based_on_case_ids": [
+        "DC-004"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 1,
+      "note_for_admin": "類似ケースDC-004の実行体制リスクを踏まえ、体制構築の具体性を問う。"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "customer_onboarding",
+      "question": "類似ケース（DC-003, DC-004）で問題となった「顧客側の初期導入・運用工数」について、この企画ではどのような対策や簡素化を考えていますか？顧客に求める行動変容レベルを具体的に示してください。",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-004"
+      ],
+      "risk_type": "implementation_complexity",
+      "priority": 1,
+      "note_for_admin": "顧客導入の複雑さによるPoC止まりリスクを問う。"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "stakeholder_alignment",
+      "question": "既存事業やプロダクトとの機能重複（DC-002）や社内ステークホルダーとの調整（DC-010）が想定される場合、どのような観点で差別化を図り、合意形成を進める計画ですか？",
+      "based_on_case_ids": [
+        "DC-002",
+        "DC-010"
+      ],
+      "risk_type": "internal_conflict",
+      "priority": 2,
+      "note_for_admin": "社内カニバリゼーションや組織要因での頓挫リスクを問う。"
+    },
+    {
+      "id": "q5",
+      "layer": 2,
+      "theme": "finance",
+      "question": "類似ケース（DC-003）で懸念された「ユニットエコノミクスが成立しないリスク」に対し、この企画では顧客獲得コストと顧客生涯価値をどのように見込み、収益性を確保する計画ですか？",
+      "based_on_case_ids": [
+        "DC-003"
+      ],
+      "risk_type": "unit_economics",
+      "priority": 2,
+      "note_for_admin": "ユニットエコノミクスの健全性、特に獲得コストとLTVのバランスを問う。"
+    },
+    {
+      "id": "q6",
+      "layer": 3,
+      "theme": "project_strategy",
+      "question": "類似ケース（DC-003, DC-008, DC-010）で事業化に至らなかった主な理由として、「PoC止まり」や「社内調整の難しさ」がありました。これらの失敗パターンを踏まえ、本企画では特にどの要素で差をつけ、推進を確実にする計画ですか？",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-008",
+        "DC-010"
+      ],
+      "risk_type": "project_viability",
+      "priority": 1,
+      "note_for_admin": "類似ケースの主要な失敗理由に対し、この企画の具体的な回避策や優位性を問う（空の企画案でも汎用的に使えるよう調整）。"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-11-27T14:21:33.280769Z",
+    "ended_at": null
+  }
+}

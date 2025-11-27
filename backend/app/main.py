@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -200,20 +200,17 @@ def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionC
 
     # デモ実行時
     if payload.is_demo:
+        print("debug: デモデータから問いを作成中...")
         questions, _ = question_generator.generate_demo_questions()
+        print("debug: 作成完了")
     else:
         # 問い生成（上位類似ケースを渡す）
+        print("debug: 生成AIから問いを生成中...")
         questions, meta = question_generator.generate_questions(new_idea, similar_cases)
+        print("debug: 生成終了")
 
     # セッションログ作成
     session_id = logging_service.create_session_log(new_idea, questions)
-
-    print(ReviewSessionCreateResponse(
-        session_id=session_id,
-        new_idea=new_idea,
-        questions=questions,
-        similar_cases=similar_cases,
-    ))
 
     return ReviewSessionCreateResponse(
         session_id=session_id,

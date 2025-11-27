@@ -109,7 +109,7 @@
 
     const body = document.createElement("p");
     body.className = "question-card__body";
-    body.textContent = question.text;
+    body.textContent = question.question;
     card.appendChild(body);
 
     const controls = document.createElement("div");
@@ -122,7 +122,7 @@
     reflectButton.addEventListener("click", () => {
       const snippet =
         question.reflectSnippet ||
-        `【問いへの応答メモ】\n${question.text}\n- `;
+        `【問いへの応答メモ】\n${question.question}\n- `;
       appendToIdeaBody(snippet);
     });
 
@@ -245,6 +245,7 @@
   async function createIdeas() {
     const titleInput = document.getElementById("data-title");
     const bodyTextarea = document.getElementById("idea-body");
+    const isDemo = document.getElementById("demo-mode-checkbox").checked;
 
     //送信データ作成
     const sendData = {
@@ -258,7 +259,7 @@
         model: "",
         memo: ""
       },
-      is_demo: true
+      is_demo: isDemo
     };
 
     try{
@@ -360,8 +361,12 @@
     // エラーなどでnullが帰ってきた場合中断
     if (!responceData)  return;
 
+    console.log(JSON.stringify(responceData, null, 2));
+
     // 分離
     const { questions, cases } = responceData;
+
+    console.log(JSON.stringify(questions, null, 2));
 
     renderQuestions(questions);
     renderCases(cases);

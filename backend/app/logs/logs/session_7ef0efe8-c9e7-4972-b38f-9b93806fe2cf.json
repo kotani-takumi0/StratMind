@@ -1,0 +1,101 @@
+{
+  "session_id": "7ef0efe8-c9e7-4972-b38f-9b93806fe2cf",
+  "created_at": "2025-11-27T14:22:16.388611Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【目的・課題】\n\n\n【対象ユーザー】\n\n\n【提供価値・ユースケース】\n\n\n【収益モデル・ビジネスモデル】\n\n\n【その他メモ・前提】\n",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "Q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画の最終的な目的と成功指標（KPI）を、誰にどんな変化を起こすのかという観点で一文で説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "L1基本項目"
+    },
+    {
+      "id": "Q2",
+      "layer": 1,
+      "theme": "execution_capacity",
+      "question": "この企画の日常運用の責任者と必要なロール（部署・役割）を挙げ、現状のチーム体制でどこが特に弱いか、具体的なスキルやリソースの観点から説明してください。",
+      "based_on_case_ids": [
+        "DC-004"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "L1基本項目、DC-004の実行体制リスクを鑑みて強調。"
+    },
+    {
+      "id": "Q3",
+      "layer": 2,
+      "theme": "unit_economics_feasibility",
+      "question": "提供価値に対し、顧客の初期導入工数やランニングコストが過大ではないか、ユニットエコノミクスが成立する具体的な根拠と合わせて説明してください。",
+      "based_on_case_ids": [
+        "DC-003"
+      ],
+      "risk_type": "implementation_burden",
+      "priority": 1,
+      "note_for_admin": "DC-003の初期導入工数・ユニットエコノミクス破綻からの問い。"
+    },
+    {
+      "id": "Q4",
+      "layer": 2,
+      "theme": "stakeholder_alignment",
+      "question": "社内の既存事業や他部門との連携・競合の可能性について、どのような調整が必要か、また部門間の合意形成プロセスと具体的なリスクを説明してください。",
+      "based_on_case_ids": [
+        "DC-002",
+        "DC-010"
+      ],
+      "risk_type": "internal_conflict",
+      "priority": 2,
+      "note_for_admin": "DC-002のカニバリ、DC-010の組織要因・ステークホルダー調整からの問い。"
+    },
+    {
+      "id": "Q5",
+      "layer": 2,
+      "theme": "external_uncertainty",
+      "question": "事業を取り巻く規制や業界標準、技術トレンドなど、外部環境の不確実性が高い場合、その不確実性をどうモニタリングし、事業計画に反映させていくかを具体的に説明してください。",
+      "based_on_case_ids": [
+        "DC-008"
+      ],
+      "risk_type": "regulatory_uncertainty",
+      "priority": 3,
+      "note_for_admin": "DC-008の規制不確実性からの問い。"
+    },
+    {
+      "id": "Q6",
+      "layer": 3,
+      "theme": "differentiation_novelty",
+      "question": "この企画が既存の競合や代替手段と比較して、何が特に『革新的』あるいは『独自性がある』と言えるのか、その具体的根拠と、ユーザーの行動にどんな本質的な変化をもたらすのかを説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "lack_of_differentiation",
+      "priority": 1,
+      "note_for_admin": "企画案がないため、あらゆる企画に当てはまる「特徴的な点」として問いを設定。"
+    },
+    {
+      "id": "Q7",
+      "layer": 3,
+      "theme": "scope_complexity",
+      "question": "この企画において、他の類似案件と比べて特に『規模が大きい』、『複雑性が高い』、あるいは『特定の外部パートナーや技術への依存度が高い』点はありますか？もしあれば、それが事業化のボトルネックにならないための対策を説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "project_complexity_risk",
+      "priority": 2,
+      "note_for_admin": "企画案がないため、あらゆる企画に当てはまる「極端な点」として、規模・複雑性・依存度を問う。"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-11-27T14:22:16.388611Z",
+    "ended_at": null
+  }
+}
