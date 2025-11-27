@@ -242,9 +242,34 @@
     });
   }
 
+  async function createIdeas() {
+    const titleInput = document.getElementById("data-title");
+    const bodyTextarea = document.getElementById("idea-body");
+
+    //送信データ作成
+    const sendData = {
+      new_idea: {
+        title: titleInput.value,
+        content: bodyTextarea.value,
+      },
+      is_domo: true
+    };
+
+    try{
+      //常に同じURLへPOSTする
+      const response = await fetch("http://localhost:8000/api/reveiew_sessions",{
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(sendData)
+      });
+
+      const result = await response.json();
+    }
+  }
+
   // Dummy Data & Review Trigger
 
-  function buildDummyQuestions(ideaTitle, ideaBody) {
+  function buildQuestions(ideaTitle, ideaBody) {
     const titlePart = ideaTitle || "この企画";
     const lengthHint =
       ideaBody && ideaBody.length > 400
@@ -276,7 +301,7 @@
     ];
   }
 
-  function buildDummyCases() {
+  function buildCases() {
     return [
       {
         id: "c1",
@@ -299,7 +324,7 @@
     ];
   }
 
-  function runDummyReview() {
+  function runReview() {
     const titleInput = document.getElementById("idea-title");
     const bodyTextarea = document.getElementById("idea-body");
     const title = titleInput ? titleInput.value.trim() : "";
@@ -308,8 +333,11 @@
     showMessage("info", "ダミーデータでレビュー結果を更新しました。");
 
     //現在はここから事前に作成している質問文の配列をquestionsに渡しているが将来的にはLLMが生成した質問を入れたいと考えている
-    const questions = buildDummyQuestions(title, body);
-    const cases = buildDummyCases();
+    //これをバックであるPython
+    // const questions = buildQuestions(title, body);
+    //  const cases = buildCases();
+
+    const idea = createIdeas();
 
     renderQuestions(questions);
     renderCases(cases);
@@ -323,7 +351,7 @@
 
     const updateReviewBtn = document.getElementById("update-review-btn");
     if (updateReviewBtn) {
-      updateReviewBtn.addEventListener("click", runDummyReview);
+      updateReviewBtn.addEventListener("click", runReview);
     }
   });
 })();
