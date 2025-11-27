@@ -6,6 +6,7 @@
  * - 問いカードの「企画書に反映」ボタンで左ペインのテキストエリアに追記
  */
 
+// 即時実行関数
 (() => {
   "use strict";
 
@@ -64,13 +65,21 @@
   // Editor helper
 
   function appendToIdeaBody(text) {
+    // idea-bodyというidに入っているエレメントをtextareaという変数に代入
     const textarea = document.getElementById("idea-body");
+    // textareがnull（画面上で入力エリアが空）だとこの変数を抜け出す
     if (!textarea) return;
 
+    // textareaにすでに文章が入っているなら改行を二つ入れる。空なら何も入れない（三項演算子を使用）
     const separator = textarea.value ? "\n\n" : "";
+    // 元の分に改行とテキスト（AIレビューによる提案文章）を結合
     textarea.value = `${textarea.value}${separator}${text}`;
+    
+    //「企画書に反映する」というボタンを押したときにtextare（企画書本文）にカーソルが合わせられる。（入力がすぐに始めれる）
     textarea.focus();
 
+    //カーソルをどこから始めてどこを終わりにするか（入力をどこから始めるか）を決める
+    //ここでは初めと終わりが同じなので、文章の末尾にカーソルを合わせるという挙動になる
     textarea.selectionStart = textarea.value.length;
     textarea.selectionEnd = textarea.value.length;
   }
@@ -93,6 +102,7 @@
     meta.className = "question-card__meta";
     meta.textContent = question.meta || "";
 
+    // 上で作成したlabel、metaをheaderの子要素とし、headerをcardの子要素とした
     header.appendChild(label);
     header.appendChild(meta);
     card.appendChild(header);
@@ -122,9 +132,12 @@
     checkbox.type = "checkbox";
     const statusText = document.createElement("span");
     statusText.textContent = "この問いは検討済みにする";
+    // チェックされたら　=>　以降の処理を実行する
+    // changeはどのような状態になったら以下の処理が実装されるかを指す
     checkbox.addEventListener("change", () => {
       if (checkbox.checked) {
         statusText.textContent = "検討済み";
+        //チェックボタンが押されたら少し薄くなる
         card.style.opacity = "0.7";
       } else {
         statusText.textContent = "この問いは検討済みにする";
@@ -294,6 +307,7 @@
 
     showMessage("info", "ダミーデータでレビュー結果を更新しました。");
 
+    //現在はここから事前に作成している質問文の配列をquestionsに渡しているが将来的にはLLMが生成した質問を入れたい
     const questions = buildDummyQuestions(title, body);
     const cases = buildDummyCases();
 
