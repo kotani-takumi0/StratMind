@@ -1,0 +1,42 @@
+[
+  {
+    "id": "q1",
+    "layer": 1,
+    "theme": "purpose_kpi",
+    "question": "誰の行動をどう変えることで、どの指標を改善しますか？",
+    "based_on_case_ids": [],
+    "risk_type": "generic_check",
+    "priority": 2,
+    "note_for_admin": "行動変容とKPIの接続を確認するための基本チェック"
+  },
+  {
+    "id": "q2",
+    "layer": 1,
+    "theme": "target_scope",
+    "question": "主要なユースケースを3つに絞るとしたらどれですか？",
+    "based_on_case_ids": [],
+    "risk_type": "market_size",
+    "priority": 3,
+    "note_for_admin": "ユーザーセグメントのフォーカスと優先順位付け"
+  },
+  {
+    "id": "q3",
+    "layer": 2,
+    "theme": "execution",
+    "question": "最初の6ヶ月間で最も重要な学習指標は何ですか？",
+    "based_on_case_ids": [],
+    "risk_type": "execution_capacity",
+    "priority": 2,
+    "note_for_admin": "PMF探索初期の成功定義を確認"
+  },
+  {
+    "id": "q4",
+    "layer": 3,
+    "theme": "differentiation",
+    "question": "競合と比べたときの決定的な差別化要素は何ですか？",
+    "based_on_case_ids": [],
+    "risk_type": "generic_check",
+    "priority": 1,
+    "note_for_admin": "差別化戦略を明確化する"
+  }
+]

@@ -109,7 +109,7 @@
 
     const body = document.createElement("p");
     body.className = "question-card__body";
-    body.textContent = question.text;
+    body.textContent = question.question;
     card.appendChild(body);
 
     const controls = document.createElement("div");
@@ -122,7 +122,7 @@
     reflectButton.addEventListener("click", () => {
       const snippet =
         question.reflectSnippet ||
-        `【問いへの応答メモ】\n${question.text}\n- `;
+        `【問いへの応答メモ】\n${question.question}\n- `;
       appendToIdeaBody(snippet);
     });
 
@@ -245,25 +245,43 @@
   async function createIdeas() {
     const titleInput = document.getElementById("data-title");
     const bodyTextarea = document.getElementById("idea-body");
+    const isDemo = document.getElementById("demo-mode-checkbox").checked;
 
     //送信データ作成
     const sendData = {
       new_idea: {
-        title: titleInput.value,
-        content: bodyTextarea.value,
+        title: titleInput ? titleInput.value : "",
+        content: bodyTextarea ? bodyTextarea.value : "",
+        // 受け取るpydantic側と合わせないといけないので、今はとりあえずから文字とした
+        purpose: "",
+        target: "",
+        value: "",
+        model: "",
+        memo: ""
       },
-      is_domo: true
+      is_demo: isDemo
     };
 
     try{
       //常に同じURLへPOSTする
-      const response = await fetch("http://localhost:8000/api/reveiew_sessions",{
+      const response = await fetch("http://localhost:8000/api/review_sessions",{
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify(sendData)
       });
 
+      // うまく送れなかったとき
+      if (!response.ok){
+        throw new Error(`HTTP error!\n status: ${response.status}`);
+      }
+
       const result = await response.json();
+      return result;
+    }
+    catch (error) {
+      console.error("エラーが発生しました:", error);
+      alert("送信に失敗しました");
+      return null;
     }
   }
 
@@ -324,7 +342,8 @@
     ];
   }
 
-  function runReview() {
+  // 11/26 add: 非同期処理化(createIdeasが非同期処理なので)
+  async function runReview() {
     const titleInput = document.getElementById("idea-title");
     const bodyTextarea = document.getElementById("idea-body");
     const title = titleInput ? titleInput.value.trim() : "";
@@ -337,7 +356,17 @@
     // const questions = buildQuestions(title, body);
     //  const cases = buildCases();
 
-    const idea = createIdeas();
+    const responceData = await createIdeas();
+
+    // エラーなどでnullが帰ってきた場合中断
+    if (!responceData)  return;
+
+    console.log(JSON.stringify(responceData, null, 2));
+
+    // 分離
+    const { questions, cases } = responceData;
+
+    console.log(JSON.stringify(questions, null, 2));
 
     renderQuestions(questions);
     renderCases(cases);

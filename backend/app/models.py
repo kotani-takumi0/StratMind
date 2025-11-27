@@ -92,6 +92,21 @@ class FeedbackResponse(BaseModel):
     session_id: str
     saved_count: int
 
+### LLM質問生成用モデル
+class LLMQuestionItem(BaseModel):
+    id: str
+    layer: int
+    theme: str
+    question: str
+    based_on_case_ids: list[str]
+    risk_type: str
+    priority: int
+    note_for_admin: str
+
+class LLMQuestionsPayload(BaseModel):
+    questions: list[LLMQuestionItem]
+    meta: QuestionGenerationMeta
+###
 
 __all__ = [
     "DecisionCase",
@@ -105,4 +120,5 @@ __all__ = [
     "GenerateQuestionsResponse",
     "FeedbackRequest",
     "FeedbackResponse",
+    "LLMQuestionsPayload",
 ]
