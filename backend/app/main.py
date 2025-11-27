@@ -51,17 +51,21 @@ class NewIdeaForm(BaseModel):
     """フロントエンドのフォーム構造に対応する NewIdea 入力用モデル。"""
 
     title: str
-    purpose: str
-    target: str
-    value: str
-    model: str
-    memo: str
+
+    # purpose: str
+    # target: str
+    # value: str
+    # model: str
+    # memo: str
+
+    content: str
 
 
 class ReviewSessionCreateRequest(BaseModel):
     """POST /api/review_sessions のリクエストボディ。"""
 
     new_idea: NewIdeaForm
+    is_demo: bool
     tags: List[str] = []
 
 
@@ -174,6 +178,11 @@ def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionC
     をまとめて実行し、1つのレスポンスとして返す。
     """
 
+    if payload.is_demo:
+        pass
+
+        
+
     form = payload.new_idea
 
     # NewIdea.summary を複数フィールドから組み立てる
@@ -252,6 +261,9 @@ def get_decision_case(case_id: str) -> DecisionCase:
             return c
 
     raise HTTPException(status_code=404, detail="DecisionCase not found")
+
+# @app.post("api/reveiew_sessions")
+# def 
 
 
 # 実行例:
