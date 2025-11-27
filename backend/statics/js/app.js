@@ -307,7 +307,7 @@
 
     showMessage("info", "ダミーデータでレビュー結果を更新しました。");
 
-    //現在はここから事前に作成している質問文の配列をquestionsに渡しているが将来的にはLLMが生成した質問を入れたい
+    //現在はここから事前に作成している質問文の配列をquestionsに渡しているが将来的にはLLMが生成した質問を入れたいと考えている
     const questions = buildDummyQuestions(title, body);
     const cases = buildDummyCases();
 
