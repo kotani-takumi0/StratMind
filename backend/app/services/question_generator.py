@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 from typing import Any, Tuple
 
-from dotenv import load_dotenv
 from pydantic import ValidationError
 
 from app.models import (
@@ -16,8 +15,6 @@ from app.models import (
 
 from app.services.loader import load_demo_questions
 from app.services.ai_services import ai_service
-
-load_dotenv()
 
 # Layer1 用のベース質問テンプレート
 BASE_QUESTIONS_LAYER1: list[dict[str, str]] = [

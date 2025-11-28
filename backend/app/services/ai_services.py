@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-import os
 import numpy as np
 from openai import OpenAI
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
 
 from app.models import LLMQuestionsPayload
+from app.config import get_settings
+
+load_dotenv()
 
 # 11/27 add: AIを使うサービスはここに集約
 class AI_Services:
@@ -17,18 +20,18 @@ class AI_Services:
         """
         初回で呼ばれた際にAPIキーの有無に基づいて使用するAIクライアントを選択する関数
         """
-        openai_key = os.getenv("OPENAI_API_KEY")
-        gemini_key = os.getenv("GEMINI_API_KEY")
+
+        settings = get_settings()
         
         # デフォルトはOpenAI
-        if openai_key:
+        if key := settings.OPEN_API_KEY:
             print("OpenAI APIを使用します。")
-            return OpenAI()
+            return OpenAI(api_key=key)
         
         # OpenAIキーがない場合、Geminiキーの有無を確認
-        elif gemini_key:
+        elif key := settings.GEMINI_API_KEY:
             print("OpenAI APIキーがないため、Gemini API (2.5 Flash) を使用します。")
-            return genai.Client()
+            return genai.Client(api_key=key)
         
         # どちらのキーもない場合
         else:

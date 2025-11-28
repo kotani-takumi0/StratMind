@@ -1,11 +1,8 @@
 from __future__ import annotations
 
 import numpy as np
-from dotenv import load_dotenv
 
 from app.services.ai_services import ai_service
-
-load_dotenv()
 
 # 11/27 add: services/ai_services.pyに集約
 def embed_texts(texts: list[str]) -> np.ndarray:
