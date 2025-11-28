@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -51,13 +51,11 @@ class NewIdeaForm(BaseModel):
     """フロントエンドのフォーム構造に対応する NewIdea 入力用モデル。"""
 
     title: str
-
-    # purpose: str
-    # target: str
-    # value: str
-    # model: str
-    # memo: str
-
+    purpose: str
+    target: str
+    value: str
+    model: str
+    memo: str
     content: str
 
 
@@ -178,11 +176,6 @@ def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionC
     をまとめて実行し、1つのレスポンスとして返す。
     """
 
-    if payload.is_demo:
-        pass
-
-        
-
     form = payload.new_idea
 
     # NewIdea.summary を複数フィールドから組み立てる
@@ -205,8 +198,16 @@ def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionC
     scored_cases = similarity.search_similar_cases(new_idea, top_k=5)
     similar_cases: List[DecisionCase] = [sc.case for sc in scored_cases]
 
-    # 問い生成（上位類似ケースを渡す）
-    questions, meta = question_generator.generate_questions(new_idea, similar_cases)
+    # デモ実行時
+    if payload.is_demo:
+        print("debug: デモデータから問いを作成中...")
+        questions, _ = question_generator.generate_demo_questions()
+        print("debug: 作成完了")
+    else:
+        # 問い生成（上位類似ケースを渡す）
+        print("debug: 生成AIから問いを生成中...")
+        questions, meta = question_generator.generate_questions(new_idea, similar_cases)
+        print("debug: 生成終了")
 
     # セッションログ作成
     session_id = logging_service.create_session_log(new_idea, questions)
