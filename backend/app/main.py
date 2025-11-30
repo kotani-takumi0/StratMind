@@ -263,7 +263,7 @@ def get_decision_case(case_id: str) -> DecisionCase:
 
     raise HTTPException(status_code=404, detail="DecisionCase not found")
 
-# @app.post("api/reveiew_sessions")
+# @app.post("api/review_sessions")
 # def 
 
 
