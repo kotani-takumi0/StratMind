@@ -266,10 +266,12 @@
       //常に同じURLへPOSTする
 
       // 7cf47ebbdf95d3a60abad83fa0dda3b728bf055e
+      //12/3 fetchリクエストで指定するエンドポイントのURLを相対パスに書き直した
       const response = await fetch("http://localhost:8000/api/review_sessions",{
         method: "POST",
         //このリクエストの本文はJSON形式であることを明記
         headers: {"Content-Type":"application/json"},
+        //送りたいデータ
         body: JSON.stringify(sendData)
       });
 
@@ -278,6 +280,7 @@
         throw new Error(`HTTP error!\n status: ${response.status}`);
       }
 
+      // 帰ってきたデータをresultに入れる
       const result = await response.json();
       return result;
     }
@@ -383,6 +386,7 @@
 
     const updateReviewBtn = document.getElementById("update-review-btn");
     if (updateReviewBtn) {
+      //updateReviewというボタンフロントでは「AIレビューを更新する」というボタン）に対してクリックというイベントが発生した時にrunReviewという関数を実行してくださいという命令
       updateReviewBtn.addEventListener("click", runReview);
     }
   });
