@@ -30,6 +30,7 @@ def build_case_text(case: DecisionCase) -> str:
     return "\n".join(parts)
 
 
+# 埋め込みモデルが読み取りやすいように形式を整えている（構造化を崩している）
 def build_query_text(new_idea: NewIdea) -> str:
     parts = [
         new_idea.title,
@@ -91,9 +92,12 @@ def search_similar_cases(new_idea: NewIdea, top_k: int = 5) -> List[ScoredDecisi
     if CASES is None or X_n is None:
         raise Exception("initialize_similarity() が実行されていません。")
 
+    #テキストを埋め込みに渡しやすい形にする
     query_text = build_query_text(new_idea)
+    #テキストの埋め込み
     query_vec = embed_texts([query_text])
 
+    #スコア順に並べ替える
     idx_scores = analyze_similarity_cases(query_vec, topk=top_k)
 
     return [

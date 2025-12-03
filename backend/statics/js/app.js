@@ -270,6 +270,7 @@
         method: "POST",
         //このリクエストの本文はJSON形式であることを明記
         headers: {"Content-Type":"application/json"},
+        //送りたいデータ
         body: JSON.stringify(sendData)
       });
 
@@ -278,6 +279,7 @@
         throw new Error(`HTTP error!\n status: ${response.status}`);
       }
 
+      // 帰ってきたデータをresultに入れる
       const result = await response.json();
       return result;
     }
@@ -383,6 +385,7 @@
 
     const updateReviewBtn = document.getElementById("update-review-btn");
     if (updateReviewBtn) {
+      //updateReviewというボタンフロントでは「AIレビューを更新する」というボタン）に対してクリックというイベントが発生した時にrunReviewという関数を実行してくださいという命令
       updateReviewBtn.addEventListener("click", runReview);
     }
   });

@@ -9,6 +9,11 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
+#12/3 .envに書いてあるAPIキーを読み取る(K.T)
+from dotenv import load_dotenv
+load_dotenv()
+
+
 from .config import get_settings
 from .models import (
     DecisionCase,
@@ -180,11 +185,14 @@ def create_review_session(payload: ReviewSessionCreateRequest) -> ReviewSessionC
 
     # NewIdea.summary を複数フィールドから組み立てる
     summary_parts = [
-        f"【目的・課題】\n{form.purpose}",
-        f"【対象ユーザー】\n{form.target}",
-        f"【提供価値・ユースケース】\n{form.value}",
-        f"【収益モデル・ビジネスモデル】\n{form.model}",
-        f"【その他メモ・前提】\n{form.memo}",
+        # 12/3 現在は使用していないものをコメントアウト
+
+        # f"【目的・課題】\n{form.purpose}",
+        # f"【対象ユーザー】\n{form.target}",
+        # f"【提供価値・ユースケース】\n{form.value}",
+        # f"【収益モデル・ビジネスモデル】\n{form.model}",
+        # f"【その他メモ・前提】\n{form.memo}",
+        f"【本文】\n{form.content}"
     ]
     summary = "\n\n".join(summary_parts)
 
