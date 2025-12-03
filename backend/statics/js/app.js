@@ -266,6 +266,7 @@
       //常に同じURLへPOSTする
 
       // 7cf47ebbdf95d3a60abad83fa0dda3b728bf055e
+      //12/3 fetchリクエストで指定するエンドポイントのURLを相対パスに書き直した
       const response = await fetch("http://localhost:8000/api/review_sessions",{
         method: "POST",
         //このリクエストの本文はJSON形式であることを明記

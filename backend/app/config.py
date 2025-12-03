@@ -13,9 +13,10 @@ class Settings(BaseModel):
     """
 
     APP_NAME: str = "Decision Question Helper"
+    # 12/3　実際に使用されているポートは8000番だったため、CORSの許可を書き換えた(K.T)
     CORS_ORIGINS: List[str] = [
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
     ]
 
 
