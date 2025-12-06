@@ -290,6 +290,12 @@ body {
   margin-bottom: 6px;
 }
 
+.question-card__header-left {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .question-card__label {
   font-size: 11px;
   font-weight: 600;
@@ -301,6 +307,37 @@ body {
 .question-card__meta {
   font-size: 11px;
   color: var(--color-text-muted);
+}
+
+.question-card__layer {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.question-card__layer--1 {
+  background-color: #e0f2fe;
+  color: #075985;
+}
+
+.question-card__layer--2 {
+  background-color: #ecfdf3;
+  color: #166534;
+}
+
+.question-card__layer--3 {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.question-card__layer--unknown {
+  background-color: #f3f4f6;
+  color: #374151;
 }
 
 .question-card__body {

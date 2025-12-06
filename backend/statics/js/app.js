@@ -94,16 +94,33 @@
     const header = document.createElement("div");
     header.className = "question-card__header";
 
+    const headerLeft = document.createElement("div");
+    headerLeft.className = "question-card__header-left";
+
     const label = document.createElement("span");
     label.className = "question-card__label";
     label.textContent = "Review Question";
 
+    const layerText =
+      typeof question.layer === "number" ? `Layer ${question.layer}` : "Layer ?";
+    const layerClass =
+      typeof question.layer === "number"
+        ? `question-card__layer--${question.layer}`
+        : "question-card__layer--unknown";
+    const layerBadge = document.createElement("span");
+    layerBadge.className = `question-card__layer ${layerClass}`;
+    layerBadge.textContent = layerText;
+
+    headerLeft.appendChild(label);
+    headerLeft.appendChild(layerBadge);
+
     const meta = document.createElement("span");
     meta.className = "question-card__meta";
-    meta.textContent = question.meta || "";
+    const themeText = question.theme ? `Theme: ${question.theme}` : "";
+    meta.textContent = themeText;
 
-    // 上で作成したlabel、metaをheaderの子要素とし、headerをcardの子要素とした
-    header.appendChild(label);
+    // headerLeft と meta をヘッダーに配置
+    header.appendChild(headerLeft);
     header.appendChild(meta);
     card.appendChild(header);
 
@@ -243,7 +260,7 @@
   }
 
   async function createIdeas() {
-    const titleInput = document.getElementById("data-title");
+    const titleInput = document.getElementById("idea-title");
     const bodyTextarea = document.getElementById("idea-body");
     const isDemo = document.getElementById("demo-mode-checkbox").checked;
 
@@ -370,12 +387,12 @@
     console.log(JSON.stringify(responceData, null, 2));
 
     // 分離
-    const { questions, cases } = responceData;
+    const { questions, similar_cases } = responceData;
 
     console.log(JSON.stringify(questions, null, 2));
 
     renderQuestions(questions);
-    renderCases(cases);
+    renderCases(similar_cases);
     activateTab("questions");
   }
 

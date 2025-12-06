@@ -1,0 +1,87 @@
+{
+  "session_id": "cf1d7dda-f8cd-48ed-bfb6-0e523548e27e",
+  "created_at": "2025-12-06T11:10:42.452756Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【本文】\ntestestsetstew",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画の最終的な目的は何で、具体的にどのようにユーザーに価値を提供することを目指していますか？一文で説明してください。",
+      "based_on_case_ids": [
+        "DC-008",
+        "DC-006"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "目的が不明瞭な場合、必要な情報が得られない可能性があるため、注意を促す。"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "execution",
+      "question": "部署や役割を分けて、日常運用の責任者が不足している部分や、運用に必要なリソースが揃っているかを具体的に示してください。",
+      "based_on_case_ids": [
+        "DC-010",
+        "DC-005"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "実行可能性の観点から、運営体制の弱点を洗い出すことが重要。"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "過去の成功・失敗事例に照らして、どのように差別化を図ることが重要だと考えますか？具体例を挙げて論じてください。",
+      "based_on_case_ids": [
+        "DC-006",
+        "DC-003"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "競合他社との差別化が図れない場合の懸念を考慮する必要がある。"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "target_scope",
+      "question": "この企画では、どのターゲットユーザーを特に重視しているのか、またその外のユーザーをあえて選ばない理由は何かを示してください。",
+      "based_on_case_ids": [
+        "DC-010",
+        "DC-006"
+      ],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "ターゲットの明確化が成功に繋がるため、その点を強調する。"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "differentiation",
+      "question": "現提案が過去のプロジェクトと比べて特にユニークな点は何ですか？その強みが実際にどのように活かされると考えていますか？",
+      "based_on_case_ids": [
+        "DC-008",
+        "DC-010"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "特異性を検証し、提案の強みを具体化することが重要。"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-06T11:10:42.452756Z",
+    "ended_at": null
+  }
+}

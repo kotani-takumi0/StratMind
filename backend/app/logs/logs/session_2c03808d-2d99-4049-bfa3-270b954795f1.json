@@ -1,0 +1,79 @@
+{
+  "session_id": "2c03808d-2d99-4049-bfa3-270b954795f1",
+  "created_at": "2025-12-06T04:25:36.330619Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【本文】\njfdiosdfusdjvnmlsdo",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画が成果を上げることで、具体的にどのような顧客や市場にどんな貢献ができると考えますか？",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "成果イメージを明確にするための問い。"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "この企画が狙う主な対象ユーザーを3つ挙げ、そのユーザーが抱える現状の課題は何か具体的に示してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "ターゲットユーザーの明確化を促す。"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "execution",
+      "question": "過去の決定事例において、運用体制が原因で問題が生じた場合に、何が不足していたのか具体的に考えてみましょう。",
+      "based_on_case_ids": [
+        "DC-005",
+        "DC-0010"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "運用体制の強化に向けた問い。"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "過去に似た事例で失敗した理由を踏まえ、競合他社との差別化として考えられる独自のポイントは何でしょうか？",
+      "based_on_case_ids": [
+        "DC-006"
+      ],
+      "risk_type": "value_proposition",
+      "priority": 2,
+      "note_for_admin": "差別化ポイントを明確にする問い。"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "finance",
+      "question": "現在の企画案が他の成功した事例と比較して、特に異なる点やリスク要因は何で、それにどのように備える必要があるのでしょうか？",
+      "based_on_case_ids": [
+        "DC-002"
+      ],
+      "risk_type": "market_size",
+      "priority": 3,
+      "note_for_admin": "現行案のリスクを明確にするための問い。"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-06T04:25:36.330619Z",
+    "ended_at": null
+  }
+}
