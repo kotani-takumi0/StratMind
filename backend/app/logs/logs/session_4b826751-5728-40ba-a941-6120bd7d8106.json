@@ -1,0 +1,80 @@
+{
+  "session_id": "4b826751-5728-40ba-a941-6120bd7d8106",
+  "created_at": "2025-12-06T11:09:18.029118Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【本文】\n近年、行政への信頼低下や若年層の政治的関心の薄れが指摘されている。その要因の一つとして、市民が政策形成に参加している実感を持ちにくい点がある。本企画では、生成AIを活用し、市民が自由に政策アイデアや要望を投稿できるオンラインプラットフォーム「VoiceHub」を構築することで、市民参加の促進と政策への納得感向上を目指す。\n\nVoiceHubでは、市民が日常生活で感じた課題や改善案を自由記述で投稿でき、AIがそれらを自動的に分類・要約し、行政側に分かりやすい形で提示する。行政職員はそれらの要約結果を参考に、今後の政策検討や施策立案に活用することを想定している。また、市民側には「投稿した意見がどのカテゴリに分類されたか」が可視化されることで、参加意識の向上が期待される。\n\n導入効果としては、市民からの意見収集工数の削減、従来拾いきれていなかった少数意見の可視化、市民満足度の向上などを想定する。対象は市内全住民とし、特定の利用シーンや年齢層は限定しない。まずは試験的にWebサービスとして公開し、市民の利用状況を見ながら機能拡張を検討する。\n\nなお、投稿内容の偏りや誹謗中傷への対応、AIによる要約の妥当性など、運用上の課題も想定されるため、利用規約の整備やモデレーションルールの検討を行いながら進めるものとする。",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "VoiceHubによって市民にどのような具体的変化をもたらし、成功指標は何で測定するのか、一文で説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "企画の目的を明確にし、KPIの設定を促す質問"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "VoiceHubの対象ユーザーは誰か、特に誰を対象外とし、その理由を具体的に示してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "ユーザーセグメンテーションを考えさせる問い"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "execution",
+      "question": "運営において考えられる問題点として、どのロールが特に課題となるかを挙げ、なぜそこが弱いのかを詳述してください。",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-006"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "過去事例の運営問題を踏まえた問い"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "他の市民参加型プラットフォームとの違いを具体的に挙げ、その差別化ポイントがなぜ有効なのかを説明してください。",
+      "based_on_case_ids": [
+        "DC-006"
+      ],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "差別化戦略の明確化を求める問い"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "execution",
+      "question": "VoiceHubが投稿内容をAIで分類・要約するという機能は、過去のどの事例と異なり、どんな点で特異であると考えられるかを分析してください。",
+      "based_on_case_ids": [
+        "DC-005",
+        "DC-010"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 3,
+      "note_for_admin": "企画の独自性を深掘りする問い"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-06T11:09:18.029118Z",
+    "ended_at": null
+  }
+}

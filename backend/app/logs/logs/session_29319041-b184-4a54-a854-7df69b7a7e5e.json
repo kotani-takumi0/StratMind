@@ -1,0 +1,82 @@
+{
+  "session_id": "29319041-b184-4a54-a854-7df69b7a7e5e",
+  "created_at": "2025-12-06T11:06:06.454214Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【本文】\n近年、行政への信頼低下や若年層の政治的関心の薄れが指摘されている。その要因の一つとして、市民が政策形成に参加している実感を持ちにくい点がある。本企画では、生成AIを活用し、市民が自由に政策アイデアや要望を投稿できるオンラインプラットフォーム「VoiceHub」を構築することで、市民参加の促進と政策への納得感向上を目指す。\n\nVoiceHubでは、市民が日常生活で感じた課題や改善案を自由記述で投稿でき、AIがそれらを自動的に分類・要約し、行政側に分かりやすい形で提示する。行政職員はそれらの要約結果を参考に、今後の政策検討や施策立案に活用することを想定している。また、市民側には「投稿した意見がどのカテゴリに分類されたか」が可視化されることで、参加意識の向上が期待される。\n\n導入効果としては、市民からの意見収集工数の削減、従来拾いきれていなかった少数意見の可視化、市民満足度の向上などを想定する。対象は市内全住民とし、特定の利用シーンや年齢層は限定しない。まずは試験的にWebサービスとして公開し、市民の利用状況を見ながら機能拡張を検討する。\n\nなお、投稿内容の偏りや誹謗中傷への対応、AIによる要約の妥当性など、運用上の課題も想定されるため、利用規約の整備やモデレーションルールの検討を行いながら進めるものとする。",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "本企画の最終的な目的と成功指標（KPI）を、どのように市民にどんな変化をもたらすのかを一文で表現してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "目的と目標を明確にするための問い"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "本企画が主に対象とするユーザー層と、意図的に除外するユーザー層はどのように設定されていますか？具体的な理由とともに説明してください。",
+      "based_on_case_ids": [],
+      "risk_type": "generic_check",
+      "priority": 3,
+      "note_for_admin": "ターゲットを明確にすることで実施効率を高める観点"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "execution",
+      "question": "市民からの意見を収集する運用責任者は誰で、どの部署・役割が関与するのか？その中で特にリソースが弱い部分はどこにあると思いますか？",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-006",
+        "DC-010"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 4,
+      "note_for_admin": "運用体制の弱点を明確にするための問い"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "現存の類似サービスと比較して、VoiceHubが受け入れられにくい要因は何か？それに対する対策案も含めて説明してください。",
+      "based_on_case_ids": [
+        "DC-005",
+        "DC-007"
+      ],
+      "risk_type": "market_size",
+      "priority": 2,
+      "note_for_admin": "競合との違いや市場での位置付けに焦点を当てる"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "differentiation",
+      "question": "VoiceHubが他の過去の提案と比べて最もユニークな特徴は何でしょうか？その特徴をどう活かして利用者を獲得する計画ですか？",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-006"
+      ],
+      "risk_type": "market_size",
+      "priority": 3,
+      "note_for_admin": "独自性を検証し、それをどう活用するかを議論する"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-06T11:06:06.454214Z",
+    "ended_at": null
+  }
+}

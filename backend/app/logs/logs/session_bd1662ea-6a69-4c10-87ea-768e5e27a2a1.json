@@ -1,0 +1,84 @@
+{
+  "session_id": "bd1662ea-6a69-4c10-87ea-768e5e27a2a1",
+  "created_at": "2025-12-06T11:04:33.428777Z",
+  "new_idea": {
+    "title": "",
+    "summary": "【本文】\n地方自治体では、過去の事業計画書、議会答弁、行政評価資料、要綱・通知などの文書が部局ごと・年度ごとに分散管理されており、必要な情報を探し出すだけで多くの時間が消費されている。新人職員ほど「過去に似た事例があるはずだが見つけられない」「誰に聞けばよいか分からない」という状況に陥りやすく、意思決定の質とスピードの両面で課題が生じている。\n\n本企画では、自治体が保有する過去文書を対象に、生成AIを活用した横断検索・要約支援システム「Civic Lens」を構築する。職員が自然言語で質問することで、関連する過去事業や判断事例を提示し、それらがどのような背景・課題・結論に基づいて決定されたのかを要点として整理して提示する。単なる全文検索ではなく、「なぜその判断に至ったのか」という文脈情報を重視した検索体験を提供することを特徴とする。\n\n当初の導入対象は、企画・財政・政策立案系部署を想定し、新規施策立案や既存事業の見直し時における情報収集時間の削減を狙う。将来的には、庁内FAQや引き継ぎ支援への応用も視野に入れる。効果指標としては、資料探索に要する平均時間の短縮割合、職員アンケートによる業務効率・納得感の変化などを用いることを想定している。\n\n一方で、機密情報の取り扱いや既存システムとの連携、AIの回答に対する過信リスクなど、導入にあたって検討すべき点も多い。本企画では、まず限定的な文書群による試験導入を行い、実務への適合性とリスクを確認した上で段階的な展開を検討する。",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この「Civic Lens」による情報収集の最終的な目的と、導入時に期待される具体的なKPIを一言で説明してください。",
+      "based_on_case_ids": [
+        "DC-001"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "目的とKPIの確認はプロジェクトの柱のため、特に重要"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "このシステムの主な利用者はどの職員で、排除する利用者のプロフィールはどのように考えていますか？",
+      "based_on_case_ids": [
+        "DC-003",
+        "DC-010"
+      ],
+      "risk_type": "generic_check",
+      "priority": 2,
+      "note_for_admin": "標的とするユーザー像の明確化は導入の成否を左右する"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "execution",
+      "question": "過去のケースでの失敗を踏まえ、日常運用の責任者が強化すべきロールは何で、どの部分が特に弱いと考えていますか？",
+      "based_on_case_ids": [
+        "DC-005",
+        "DC-010"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 3,
+      "note_for_admin": "体制の強化が省略されると、運用の品質が落ちる"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "他のシステムと比較して「Civic Lens」が特に強調すべき機能や提供価値は何だと考えており、その理由は何ですか？",
+      "based_on_case_ids": [
+        "DC-001"
+      ],
+      "risk_type": "market_size",
+      "priority": 2,
+      "note_for_admin": "他との違いを明確にすることで市場での認知度を高める必須"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "differentiation",
+      "question": "過去の「DecisionCase」に比べ、情報検索における「文脈情報」の重要性をどのように考慮されていますか？",
+      "based_on_case_ids": [
+        "DC-002"
+      ],
+      "risk_type": "generic_check",
+      "priority": 4,
+      "note_for_admin": "文脈を強調することで利用者に新たな価値を提供できるかが鍵"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-06T11:04:33.428777Z",
+    "ended_at": null
+  }
+}
