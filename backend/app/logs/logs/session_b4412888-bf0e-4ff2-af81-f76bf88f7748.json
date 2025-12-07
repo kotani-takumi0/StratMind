@@ -1,0 +1,82 @@
+{
+  "session_id": "b4412888-bf0e-4ff2-af81-f76bf88f7748",
+  "created_at": "2025-12-07T14:10:41.843463Z",
+  "new_idea": {
+    "title": "test1",
+    "summary": "【本文】\ncontext\nhogehogehogehoge",
+    "tags": []
+  },
+  "questions": [
+    {
+      "id": "q1",
+      "layer": 1,
+      "theme": "purpose_kpi",
+      "question": "この企画の最終的な目的は何であり、誰にどのような変化をもたらすことを目指していますか？KPIはどう設定されていますか？",
+      "based_on_case_ids": [
+        "DC-008"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "目的とKPIの明確化を促す質問"
+    },
+    {
+      "id": "q2",
+      "layer": 1,
+      "theme": "target_scope",
+      "question": "この企画が狙う主要なターゲットユーザーはどのような属性を持ち、また、意図的に除外するユーザーの具体的な特徴についても述べてください。",
+      "based_on_case_ids": [
+        "DC-010"
+      ],
+      "risk_type": "generic_check",
+      "priority": 1,
+      "note_for_admin": "ターゲットの明確化を促す質問"
+    },
+    {
+      "id": "q3",
+      "layer": 2,
+      "theme": "execution",
+      "question": "過去の事例と同様に、実行に必要な体制やリソースにおいて、この企画特有の課題は何か、どの部分に特に弱点があると考えますか？",
+      "based_on_case_ids": [
+        "DC-006"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "実行体制の課題を掘り下げる質問"
+    },
+    {
+      "id": "q4",
+      "layer": 2,
+      "theme": "differentiation",
+      "question": "競合が多い市場において、この企画ならではの強みや差別化ポイントは何か、その点における疑問点はどこにありますか？",
+      "based_on_case_ids": [
+        "DC-005"
+      ],
+      "risk_type": "market_competition",
+      "priority": 2,
+      "note_for_admin": "差別化ポイントを明確化する質問"
+    },
+    {
+      "id": "q5",
+      "layer": 3,
+      "theme": "execution",
+      "question": "過去の成功事例と比較して、この企画の運用・実行において特に特徴的な点は何であり、それがどのように影響を及ぼすと考えますか？",
+      "based_on_case_ids": [
+        "DC-007"
+      ],
+      "risk_type": "execution_capacity",
+      "priority": 2,
+      "note_for_admin": "運用の特徴を検証する質問"
+    }
+  ],
+  "feedbacks": [],
+  "session_evaluation": {
+    "experience_score": null,
+    "reuse_intent_score": null,
+    "perceived_quality_gain_score": null
+  },
+  "interaction_logs": [],
+  "session_times": {
+    "started_at": "2025-12-07T14:10:41.843463Z",
+    "ended_at": null
+  }
+}

@@ -106,4 +106,39 @@ def append_feedback(session_id: str, feedbacks: List[QuestionFeedback]) -> None:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-__all__ = ["create_session_log", "append_feedback"]
+# 12/7 ログ管理方法の追加
+def add_idea_snapshot(session_id: str, title: str, content: str) -> None: # 引数名を修正
+    """
+    企画案のスナップショットを履歴に追加保存する。
+    """
+    _ensure_log_dir()
+    path = _get_log_path(session_id)
+    
+    if not path.exists():
+        raise FileNotFoundError(f"session log not found: {session_id}")
+
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"invalid JSON log for session: {session_id}") from exc
+
+    # idea_history フィールドがなければ作成
+    if "idea_history" not in data:
+        data["idea_history"] = []
+
+    # 新しいスナップショットを作成
+    snapshot = {
+        "step": len(data["idea_history"]) + 1,
+        "title": title,
+        "summary": content,
+        "timestamp": _now_iso_utc()
+    }
+
+    data["idea_history"].append(snapshot)
+
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+# __all__ を更新
+__all__ = ["create_session_log", "append_feedback", "add_idea_snapshot"]

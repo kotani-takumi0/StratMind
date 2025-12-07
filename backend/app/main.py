@@ -95,6 +95,10 @@ class ReviewSessionFeedbackRequest(BaseModel):
 
     feedbacks: List[QuestionFeedbackV2]
 
+#12/7 企画書を更新するためのクラスを定義
+class SaveSnapshotRequest(BaseModel):
+    title: str
+    content: str
 
 @app.on_event("startup")
 def on_startup() -> None:
@@ -271,9 +275,19 @@ def get_decision_case(case_id: str) -> DecisionCase:
 
     raise HTTPException(status_code=404, detail="DecisionCase not found")
 
-# @app.post("api/review_sessions")
-# def 
-
+# 12/7 案を保存するためのエンドポイントの作成
+@app.post("/api/sessions/{session_id}/snapshots")
+def save_snapshot(session_id: str, body: SaveSnapshotRequest) -> dict:
+    #現在の企画案を履歴として保存する（何度でも実行可能）
+    try:
+        logging_service.add_idea_snapshot(
+            session_id,
+            body.title,
+            body.content
+        )
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return{"ok":True}
 
 # 実行例:
 #   (backend ディレクトリで)
