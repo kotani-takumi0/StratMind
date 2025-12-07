@@ -10,6 +10,9 @@
 (() => {
   "use strict";
 
+  // 12/7 ここで変数を宣言する
+  let currentSessionId = null;
+
   function showMessage(type, text) {
     const el = document.getElementById("global-message");
     if (!el) return;
@@ -384,6 +387,9 @@
     // エラーなどでnullが帰ってきた場合中断
     if (!responceData)  return;
 
+    //12/7 修正2 サーバーから帰ってきたsession_idを変数に保存する
+    currentSessionId = responceData.session_id;
+
     console.log(JSON.stringify(responceData, null, 2));
 
     // 分離
@@ -396,6 +402,40 @@
     activateTab("questions");
   }
 
+
+  // 12/7 履歴を更新するための関数の定義
+  async function saveSnapshot() {
+    if (!currentSessionId) {
+        alert("先にAIレビューを開始（セッション作成）してください。");
+        return;
+    }
+
+    const titleInput = document.getElementById("idea-title");
+    const bodyTextarea = document.getElementById("idea-body");
+
+    const payload = {
+        title: titleInput ? titleInput.value : "",
+        content: bodyTextarea ? bodyTextarea.value : ""
+    };
+
+    try {
+        const response = await fetch(`http://localhost:8000/api/sessions/${currentSessionId}/snapshots`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("企画の進捗を保存しました。（履歴に追加されました）");
+        } else {
+            throw new Error("保存に失敗しました");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("エラーが発生しました");
+    }
+}
+
   // Init
 
   document.addEventListener("DOMContentLoaded", () => {
@@ -405,6 +445,12 @@
     if (updateReviewBtn) {
       //updateReviewというボタンフロントでは「AIレビューを更新する」というボタン）に対してクリックというイベントが発生した時にrunReviewという関数を実行してくださいという命令
       updateReviewBtn.addEventListener("click", runReview);
+    }
+
+    // 12/7 保存ボタンのイベント登録
+    const saveSnapshotBtn = document.getElementById("save-snapshot-btn");
+    if(saveSnapshotBtn){
+      saveSnapshotBtn.addEventListener("click",saveSnapshot);
     }
   });
 })();
