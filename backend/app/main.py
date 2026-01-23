@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import List, Optional
+import os
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -288,6 +289,71 @@ def save_snapshot(session_id: str, body: SaveSnapshotRequest) -> dict:
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Session not found")
     return{"ok":True}
+
+
+# Google Integration
+from starlette.middleware.sessions import SessionMiddleware
+from fastapi.responses import RedirectResponse
+from .services import google_service
+
+# Add Session Middleware for OAuth
+app.add_middleware(SessionMiddleware, secret_key=os.getenv("SECRET_KEY", "super-secret-stratmind"))
+
+@app.get("/api/auth/login")
+def login_google(request: Request):
+    """Refirects user to Google Login."""
+    authorization_url, state = google_service.get_authorization_url()
+    request.session["oauth_state"] = state
+    return RedirectResponse(authorization_url)
+
+@app.get("/api/auth/callback")
+def auth_callback(request: Request, code: str, state: str):
+    """Callback for Google OAuth."""
+    if state != request.session.get("oauth_state"):
+        raise HTTPException(status_code=400, detail="Invalid state parameter")
+    
+    try:
+        credentials = google_service.fetch_token(code)
+        request.session["google_creds"] = google_service.credentials_to_dict(credentials)
+        # Redirect back to frontend
+        return RedirectResponse("http://localhost:8000")
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/api/auth/status")
+def auth_status(request: Request):
+    """Checks if user is logged in."""
+    creds = request.session.get("google_creds")
+    return {"is_authenticated": creds is not None}
+
+@app.get("/api/drive/files")
+def list_files(request: Request):
+    """Lists Google Docs files."""
+    creds_dict = request.session.get("google_creds")
+    if not creds_dict:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    creds = google_service.get_credentials_from_dict(creds_dict)
+    try:
+        files = google_service.list_drive_files(creds)
+        return {"files": files}
+    except Exception as e:
+        # If token expired or other error
+        raise HTTPException(status_code=401, detail=str(e))
+
+@app.get("/api/drive/import/{file_id}")
+def import_file(request: Request, file_id: str):
+    """Imports content from a Google Doc."""
+    creds_dict = request.session.get("google_creds")
+    if not creds_dict:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    creds = google_service.get_credentials_from_dict(creds_dict)
+    try:
+        content = google_service.get_doc_content(creds, file_id)
+        return {"content": content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # 実行例:
 #   (backend ディレクトリで)

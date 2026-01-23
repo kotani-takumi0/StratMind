@@ -1,23 +1,13 @@
-/* StratMind Frontend - Dual Pane Workshop UI
- *
- * 役割:
- * - タブ切り替え (Review Questions / Reference Cases)
- * - 「AIレビューを更新する」ボタンクリックでダミーデータを描画
- * - 問いカードの「企画書に反映」ボタンで左ペインのテキストエリアに追記
- */
-
-// 即時実行関数
+/* StratMind Frontend - Modern Logic (Japanese + Google Integration) */
 (() => {
   "use strict";
 
-  // 12/7 ここで変数を宣言する
   let currentSessionId = null;
+  let isGoogleAuthenticated = false;
 
   function showMessage(type, text) {
     const el = document.getElementById("global-message");
     if (!el) return;
-
-    el.className = "global-message";
 
     if (!text) {
       el.style.display = "none";
@@ -26,34 +16,37 @@
     }
 
     let cls = "message--info";
-    if (type === "success") cls = "message--success";
-    else if (type === "error") cls = "message--error";
+    // if (type === "success") cls = "message--success";
 
     el.style.display = "block";
-    el.classList.add(cls);
+    el.className = `global-message ${cls}`;
     el.textContent = text;
   }
 
   // Tabs
-
   function activateTab(tabId) {
     const questionsTab = document.getElementById("tab-questions");
     const casesTab = document.getElementById("tab-cases");
     const questionsPanel = document.getElementById("panel-questions");
     const casesPanel = document.getElementById("panel-cases");
+
     if (!questionsTab || !casesTab || !questionsPanel || !casesPanel) return;
 
     const isQuestions = tabId === "questions";
 
-    questionsTab.classList.toggle("tab--active", isQuestions);
-    questionsTab.setAttribute("aria-selected", isQuestions ? "true" : "false");
-    questionsPanel.classList.toggle("tab-panel--active", isQuestions);
-    questionsPanel.toggleAttribute("hidden", !isQuestions);
+    questionsTab.classList.toggle("tab-pill--active", isQuestions);
+    questionsTab.setAttribute("aria-selected", isQuestions);
 
-    casesTab.classList.toggle("tab--active", !isQuestions);
-    casesTab.setAttribute("aria-selected", !isQuestions ? "true" : "false");
-    casesPanel.classList.toggle("tab-panel--active", !isQuestions);
-    casesPanel.toggleAttribute("hidden", isQuestions);
+    casesTab.classList.toggle("tab-pill--active", !isQuestions);
+    casesTab.setAttribute("aria-selected", !isQuestions);
+
+    if (isQuestions) {
+      questionsPanel.style.display = "block";
+      casesPanel.style.display = "none";
+    } else {
+      questionsPanel.style.display = "none";
+      casesPanel.style.display = "block";
+    }
   }
 
   function setupTabs() {
@@ -65,111 +58,117 @@
     casesTab.addEventListener("click", () => activateTab("cases"));
   }
 
-  // Editor helper
-
+  // Editor
   function appendToIdeaBody(text) {
-    // idea-bodyというidに入っているエレメントをtextareaという変数に代入
     const textarea = document.getElementById("idea-body");
-    // textareがnull（画面上で入力エリアが空）だとこの変数を抜け出す
     if (!textarea) return;
 
-    // textareaにすでに文章が入っているなら改行を二つ入れる。空なら何も入れない（三項演算子を使用）
     const separator = textarea.value ? "\n\n" : "";
-    // 元の分に改行とテキスト（AIレビューによる提案文章）を結合
     textarea.value = `${textarea.value}${separator}${text}`;
-    
-    //「企画書に反映する」というボタンを押したときにtextare（企画書本文）にカーソルが合わせられる。（入力がすぐに始めれる）
     textarea.focus();
-
-    //カーソルをどこから始めてどこを終わりにするか（入力をどこから始めるか）を決める
-    //ここでは初めと終わりが同じなので、文章の末尾にカーソルを合わせるという挙動になる
     textarea.selectionStart = textarea.value.length;
     textarea.selectionEnd = textarea.value.length;
   }
 
-  // Question Cards
-
+  // Question Card
   function createQuestionCard(question) {
     const card = document.createElement("article");
     card.className = "question-card";
     card.dataset.questionId = question.id;
 
+    // Header
     const header = document.createElement("div");
     header.className = "question-card__header";
 
-    const headerLeft = document.createElement("div");
-    headerLeft.className = "question-card__header-left";
-
-    const label = document.createElement("span");
-    label.className = "question-card__label";
-    label.textContent = "Review Question";
-
-    const layerText =
-      typeof question.layer === "number" ? `Layer ${question.layer}` : "Layer ?";
-    const layerClass =
-      typeof question.layer === "number"
-        ? `question-card__layer--${question.layer}`
-        : "question-card__layer--unknown";
+    // Layer Badge
     const layerBadge = document.createElement("span");
-    layerBadge.className = `question-card__layer ${layerClass}`;
-    layerBadge.textContent = layerText;
+    const layerNum = typeof question.layer === 'number' ? question.layer : 1;
+    layerBadge.className = `question-card__layer question-card__layer--${layerNum}`;
+    layerBadge.textContent = `Layer ${layerNum}`;
 
-    headerLeft.appendChild(label);
-    headerLeft.appendChild(layerBadge);
-
+    // Meta
     const meta = document.createElement("span");
-    meta.className = "question-card__meta";
-    const themeText = question.theme ? `Theme: ${question.theme}` : "";
-    meta.textContent = themeText;
+    meta.style.fontSize = "11px";
+    meta.style.color = "#94a3b8";
 
-    // headerLeft と meta をヘッダーに配置
-    header.appendChild(headerLeft);
+    const themeMap = {
+      "purpose_kpi": "目的・KPI",
+      "target_scope": "ターゲット・範囲",
+      "execution": "実行体制",
+      "finance": "財務・コスト",
+      "risk": "リスク",
+      "differentiation": "差別化"
+    };
+    meta.textContent = themeMap[question.theme] || question.theme || "一般";
+
+    header.appendChild(layerBadge);
     header.appendChild(meta);
     card.appendChild(header);
 
-    const body = document.createElement("p");
+    // Body
+    const body = document.createElement("div");
     body.className = "question-card__body";
-    body.textContent = question.question;
+    body.innerHTML = (question.question || "").replace(/\n/g, "<br>");
     card.appendChild(body);
 
+    // Controls
     const controls = document.createElement("div");
     controls.className = "question-card__controls";
 
-    const reflectButton = document.createElement("button");
-    reflectButton.type = "button";
-    reflectButton.className = "button button--ghost";
-    reflectButton.textContent = "企画書に反映する";
-    reflectButton.addEventListener("click", () => {
-      const snippet =
-        question.reflectSnippet ||
-        `【問いへの応答メモ】\n${question.question}\n- `;
+    // Reflect Button
+    const reflectBtn = document.createElement("button");
+    reflectBtn.className = "reflect-btn";
+    reflectBtn.textContent = "本文に挿入";
+    reflectBtn.onclick = () => {
+      const snippet = question.reflectSnippet || `\n> 問い: ${question.question}\n- 回答: `;
       appendToIdeaBody(snippet);
-    });
+    };
 
-    const status = document.createElement("label");
-    status.className = "question-card__status";
+    // Feedback Checkbox
+    const label = document.createElement("label");
+    label.className = "feedback-label";
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    const statusText = document.createElement("span");
-    statusText.textContent = "この問いは検討済みにする";
-    // チェックされたら　=>　以降の処理を実行する
-    // changeはどのような状態になったら以下の処理が実装されるかを指す
-    checkbox.addEventListener("change", () => {
+    checkbox.className = "feedback-checkbox";
+
+    const span = document.createElement("span");
+    span.textContent = "この問いで修正した";
+
+    checkbox.addEventListener("change", async () => {
       if (checkbox.checked) {
-        statusText.textContent = "検討済み";
-        //チェックボタンが押されたら少し薄くなる
-        card.style.opacity = "0.7";
+        card.classList.add("question-card--done");
+        span.textContent = "修正/解決済み";
+
+        // API Call
+        if (currentSessionId) {
+          try {
+            await fetch(`http://localhost:8000/api/review_sessions/${currentSessionId}/feedback`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                feedbacks: [{
+                  question_id: question.id,
+                  usefulness_score: 5,
+                  applied: true,
+                  note: "Auto-saved via checkbox"
+                }]
+              })
+            });
+            console.log("Feedback saved.");
+          } catch (e) { console.error(e); }
+        }
       } else {
-        statusText.textContent = "この問いは検討済みにする";
-        card.style.opacity = "1";
+        card.classList.remove("question-card--done");
+        span.textContent = "この問いで修正した";
       }
     });
 
-    status.appendChild(checkbox);
-    status.appendChild(statusText);
+    label.appendChild(checkbox);
+    label.appendChild(span);
 
-    controls.appendChild(reflectButton);
-    controls.appendChild(status);
+    controls.appendChild(reflectBtn);
+    controls.appendChild(label);
     card.appendChild(controls);
 
     return card;
@@ -178,101 +177,71 @@
   function renderQuestions(questions) {
     const container = document.getElementById("questions-list");
     if (!container) return;
-
     container.innerHTML = "";
 
-    if (!Array.isArray(questions) || questions.length === 0) {
-      const p = document.createElement("p");
-      p.className = "placeholder-text";
-      p.textContent =
-        "まだ問いは生成されていません。AIレビューを更新してみてください。";
-      container.appendChild(p);
+    if (!questions || questions.length === 0) {
+      container.innerHTML = `<div class="empty-state"><p>まだ問いは生成されていません。</p></div>`;
       return;
     }
 
-    questions.forEach((q) => {
-      const card = createQuestionCard(q);
-      container.appendChild(card);
+    questions.forEach(q => {
+      container.appendChild(createQuestionCard(q));
     });
   }
 
-  // Reference Cases
-
+  // Case Card
   function createCaseCard(c) {
     const card = document.createElement("article");
     card.className = "case-card";
-
-    const header = document.createElement("div");
-    header.className = "case-card__header";
+    card.dataset.status = c.status || "unknown"; // for CSS border color
 
     const title = document.createElement("h3");
     title.className = "case-card__title";
     title.textContent = c.title;
 
-    const badge = document.createElement("span");
-    badge.className = "case-card__badge";
-    const status = (c.status || "").toLowerCase();
-    if (status === "adopted" || status === "採用") {
-      badge.classList.add("case-card__badge--adopted");
-      badge.textContent = c.status || "adopted";
-    } else if (status === "rejected" || status === "不採用") {
-      badge.classList.add("case-card__badge--rejected");
-      badge.textContent = c.status || "rejected";
-    } else {
-      badge.textContent = c.status || "unknown";
-    }
+    const status = document.createElement("span");
+    status.className = "case-card__status";
+    // ステータスの日本語化
+    let statusText = c.status;
+    if (statusText === 'adopted') statusText = "採用";
+    else if (statusText === 'rejected') statusText = "不採用";
+    else if (statusText === 'pending') statusText = "保留";
 
-    header.appendChild(title);
-    header.appendChild(badge);
-    card.appendChild(header);
+    status.textContent = `${statusText} • ${c.decision_date || "日付不明"}`;
 
     const summary = document.createElement("p");
     summary.className = "case-card__summary";
-    summary.textContent = c.summary || "";
+    summary.textContent = c.summary ? c.summary.substring(0, 100) + "..." : "";
+
+    card.appendChild(title);
+    card.appendChild(status);
     card.appendChild(summary);
-
-    const reason = document.createElement("p");
-    reason.className = "case-card__reason";
-    reason.textContent = c.main_reason
-      ? `主な判断理由: ${c.main_reason}`
-      : "";
-    card.appendChild(reason);
-
     return card;
   }
 
   function renderCases(cases) {
     const container = document.getElementById("cases-list");
     if (!container) return;
-
     container.innerHTML = "";
 
-    if (!Array.isArray(cases) || cases.length === 0) {
-      const p = document.createElement("p");
-      p.className = "placeholder-text";
-      p.textContent =
-        "類似する過去の意思決定ケースはまだ表示されていません。";
-      container.appendChild(p);
+    if (!cases || cases.length === 0) {
+      container.innerHTML = `<div class="empty-state"><p>類似事例は見つかりませんでした。</p></div>`;
       return;
     }
 
-    cases.forEach((c) => {
-      const card = createCaseCard(c);
-      container.appendChild(card);
-    });
+    cases.forEach(c => container.appendChild(createCaseCard(c)));
   }
 
+  // API Interaction
   async function createIdeas() {
     const titleInput = document.getElementById("idea-title");
     const bodyTextarea = document.getElementById("idea-body");
     const isDemo = document.getElementById("demo-mode-checkbox").checked;
 
-    //送信データ作成
     const sendData = {
       new_idea: {
         title: titleInput ? titleInput.value : "",
         content: bodyTextarea ? bodyTextarea.value : "",
-        // 受け取るpydantic側と合わせないといけないので、今はとりあえずから文字とした
         purpose: "",
         target: "",
         value: "",
@@ -282,175 +251,154 @@
       is_demo: isDemo
     };
 
-    try{
-      //常に同じURLへPOSTする
-
-      // 7cf47ebbdf95d3a60abad83fa0dda3b728bf055e
-      //12/3 fetchリクエストで指定するエンドポイントのURLを相対パスに書き直した
-      const response = await fetch("http://localhost:8000/api/review_sessions",{
+    try {
+      showMessage("info", "AIレビューを生成中...");
+      const response = await fetch("http://localhost:8000/api/review_sessions", {
         method: "POST",
-        //このリクエストの本文はJSON形式であることを明記
-        headers: {"Content-Type":"application/json"},
-        //送りたいデータ
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(sendData)
       });
 
-      // うまく送れなかったとき
-      if (!response.ok){
-        throw new Error(`HTTP error!\n status: ${response.status}`);
-      }
-
-      // 帰ってきたデータをresultに入れる
+      if (!response.ok) throw new Error(response.status);
       const result = await response.json();
+      showMessage(null, ""); // clear message
       return result;
-    }
-    catch (error) {
-      console.error("エラーが発生しました:", error);
-      alert("送信に失敗しました");
+    } catch (e) {
+      console.error(e);
+      showMessage("info", "エラー: サーバーに接続できませんでした。");
       return null;
     }
   }
 
-  // Dummy Data & Review Trigger
-
-  function buildQuestions(ideaTitle, ideaBody) {
-    const titlePart = ideaTitle || "この企画";
-    const lengthHint =
-      ideaBody && ideaBody.length > 400
-        ? "既にボリュームは十分です。"
-        : "まだ書ける余地がありそうです。";
-
-    return [
-      {
-        id: "q1",
-        text: `${titlePart} の「誰のどんな行動を変えるのか」が一文で説明できる状態になっていますか？`,
-        meta: "視点: ユーザー価値 / 行動変容",
-        reflectSnippet:
-          "【行動変容の定義】\n- 対象ユーザー:\n- 現状の行動:\n- 変えたい行動:\n- その結果得られる価値:\n",
-      },
-      {
-        id: "q2",
-        text: "主要なユースケースを 3 つに絞り込んだとき、それぞれにとっての「導入前後のビフォー/アフター」はどう変わりますか？",
-        meta: "視点: ユースケース / ストーリー",
-        reflectSnippet:
-          "【主要なユースケース 3 つ】\n1. \n   - 導入前: \n   - 導入後: \n2. \n   - 導入前: \n   - 導入後: \n3. \n   - 導入前: \n   - 導入後: \n",
-      },
-      {
-        id: "q3",
-        text: `${lengthHint} いまの企画書からは、最初の 6 ヶ月間で「どの数字を追うのか」が読み取れますか？`,
-        meta: "視点: 成長指標 / 初期フェーズ",
-        reflectSnippet:
-          "【最初の 6 ヶ月で追う指標】\n- 利用: \n- 価値: \n- 収益: \n- 学習: \n",
-      },
-    ];
-  }
-
-  function buildCases() {
-    return [
-      {
-        id: "c1",
-        title: "SaaS型ダッシュボードのベータ版提供",
-        status: "adopted",
-        summary:
-          "限定された既存顧客にだけベータ提供し、料金は無料だがフィードバックを重視する方針を採用した。",
-        main_reason:
-          "技術的不確実性が高く、実運用に耐えうるかの検証を学習目標としたため。",
-      },
-      {
-        id: "c2",
-        title: "全機能一括リリース案の見送り",
-        status: "rejected",
-        summary:
-          "全ての機能を一度に出す案は、開発負荷と運用リスクが高く、保守困難と判断された。",
-        main_reason:
-          "ユーザー価値の 80% を生む中核機能だけに絞った MVP 戦略を優先した。",
-      },
-    ];
-  }
-
-  // 11/26 add: 非同期処理化(createIdeasが非同期処理なので)
   async function runReview() {
-    const titleInput = document.getElementById("idea-title");
-    const bodyTextarea = document.getElementById("idea-body");
-    const title = titleInput ? titleInput.value.trim() : "";
-    const body = bodyTextarea ? bodyTextarea.value.trim() : "";
+    const data = await createIdeas();
+    if (!data) return;
 
-    showMessage("info", "ダミーデータでレビュー結果を更新しました。");
-
-    //現在はここから事前に作成している質問文の配列をquestionsに渡しているが将来的にはLLMが生成した質問を入れたいと考えている
-    //これをバックであるPython
-    // const questions = buildQuestions(title, body);
-    //  const cases = buildCases();
-
-    const responceData = await createIdeas();
-
-    // エラーなどでnullが帰ってきた場合中断
-    if (!responceData)  return;
-
-    //12/7 修正2 サーバーから帰ってきたsession_idを変数に保存する
-    currentSessionId = responceData.session_id;
-
-    console.log(JSON.stringify(responceData, null, 2));
-
-    // 分離
-    const { questions, similar_cases } = responceData;
-
-    console.log(JSON.stringify(questions, null, 2));
+    currentSessionId = data.session_id;
+    const { questions, similar_cases } = data;
 
     renderQuestions(questions);
     renderCases(similar_cases);
     activateTab("questions");
   }
 
-
-  // 12/7 履歴を更新するための関数の定義
   async function saveSnapshot() {
     if (!currentSessionId) {
-        alert("先にAIレビューを開始（セッション作成）してください。");
-        return;
+      alert("先にAIレビューを実行（セッション作成）してください。");
+      return;
+    }
+    alert("現在のスナップショットを保存しました（デモ）。");
+  }
+
+  // --- Google Integration ---
+
+  async function checkGoogleAuth() {
+    try {
+      const res = await fetch("/api/auth/status");
+      if (res.ok) {
+        const data = await res.json();
+        isGoogleAuthenticated = data.is_authenticated;
+      }
+    } catch (e) {
+      console.error("Auth check failed", e);
+    }
+  }
+
+  async function openGoogleImport() {
+    if (!isGoogleAuthenticated) {
+      // Redirect to login
+      window.location.href = "/api/auth/login";
+      return;
     }
 
-    const titleInput = document.getElementById("idea-title");
-    const bodyTextarea = document.getElementById("idea-body");
+    // Show modal and fetch files
+    const dialog = document.getElementById("drive-dialog");
+    if (dialog) dialog.showModal();
 
-    const payload = {
-        title: titleInput ? titleInput.value : "",
-        content: bodyTextarea ? bodyTextarea.value : ""
-    };
+    fetchDriveFiles();
+  }
+
+  async function fetchDriveFiles() {
+    const listEl = document.getElementById("drive-files-list");
+    if (!listEl) return;
+    listEl.innerHTML = '<li class="loading">ファイルを読み込み中...</li>';
 
     try {
-        const response = await fetch(`http://localhost:8000/api/sessions/${currentSessionId}/snapshots`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        if (response.ok) {
-            alert("企画の進捗を保存しました。（履歴に追加されました）");
-        } else {
-            throw new Error("保存に失敗しました");
-        }
+      const res = await fetch("/api/drive/files");
+      if (!res.ok) throw new Error("Failed to fetch files");
+      const data = await res.json();
+      renderDriveFiles(data.files);
     } catch (e) {
-        console.error(e);
-        alert("エラーが発生しました");
+      listEl.innerHTML = '<li class="loading" style="color:red">読み込み失敗</li>';
+      console.error(e);
     }
-}
+  }
+
+  function renderDriveFiles(files) {
+    const listEl = document.getElementById("drive-files-list");
+    if (!listEl) return;
+    listEl.innerHTML = "";
+
+    if (!files || files.length === 0) {
+      listEl.innerHTML = '<li class="loading">Googleドキュメントが見つかりませんでした。</li>';
+      return;
+    }
+
+    files.forEach(file => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+            <svg class="file-item__icon" viewBox="0 0 24 24" fill="currentColor">
+               <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+            </svg>
+            <span class="file-item__name">${file.name}</span>
+          `;
+      li.onclick = () => importDriveFile(file.id);
+      listEl.appendChild(li);
+    });
+  }
+
+  async function importDriveFile(fileId) {
+    const dialog = document.getElementById("drive-dialog");
+    // Show loading in dialog/close it? better close and show global loading
+    if (dialog) dialog.close();
+    showMessage("info", "ドキュメントをインポート中...");
+
+    try {
+      const res = await fetch(`/api/drive/import/${fileId}`);
+      if (!res.ok) throw new Error("Import failed");
+      const data = await res.json();
+
+      const textArea = document.getElementById("idea-body");
+      if (textArea) {
+        textArea.value = data.content; // Overwrite or append? Overwrite seems logical for "Import"
+      }
+      showMessage(null, "");
+    } catch (e) {
+      console.error(e);
+      showMessage("error", "インポートに失敗しました。");
+    }
+  }
+
 
   // Init
-
   document.addEventListener("DOMContentLoaded", () => {
     setupTabs();
+    checkGoogleAuth();
 
-    const updateReviewBtn = document.getElementById("update-review-btn");
-    if (updateReviewBtn) {
-      //updateReviewというボタンフロントでは「AIレビューを更新する」というボタン）に対してクリックというイベントが発生した時にrunReviewという関数を実行してくださいという命令
-      updateReviewBtn.addEventListener("click", runReview);
-    }
+    const btnUpdate = document.getElementById("update-review-btn");
+    if (btnUpdate) btnUpdate.addEventListener("click", runReview);
 
-    // 12/7 保存ボタンのイベント登録
-    const saveSnapshotBtn = document.getElementById("save-snapshot-btn");
-    if(saveSnapshotBtn){
-      saveSnapshotBtn.addEventListener("click",saveSnapshot);
+    const btnSave = document.getElementById("save-snapshot-btn");
+    if (btnSave) btnSave.addEventListener("click", saveSnapshot);
+
+    const btnGoogle = document.getElementById("google-import-btn");
+    if (btnGoogle) btnGoogle.addEventListener("click", openGoogleImport);
+
+    const dialog = document.getElementById("drive-dialog");
+    const closeBtn = document.getElementById("close-dialog-btn");
+    if (closeBtn && dialog) {
+      closeBtn.addEventListener("click", () => dialog.close());
     }
   });
+
 })();
