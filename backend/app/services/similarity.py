@@ -20,12 +20,15 @@ class ScoredDecisionCase(BaseModel):
 
 
 def build_case_text(case: DecisionCase) -> str:
+    # 構造的な類似性を高めるために、TagsとMain Reasonを強調（重複させる）する
     parts = [
-        case.title,
-        case.summary,
-        "Tags: " + ", ".join(case.tags or []),
-        "Status: " + case.status,
-        "Main reason: " + (case.main_reason or ""),
+        f"Tags: {' '.join(case.tags or [])}",  # Tagsを先頭に
+        f"Status: {case.status}",
+        f"Title: {case.title}",
+        f"Summary: {case.summary}",
+        f"Main reason: {case.main_reason or ''}",
+        f"Tags: {' '.join(case.tags or [])}",  # Tagsを再度強調
+        f"Lesson: {case.main_reason or ''}", # Reasonも表現を変えて強調
     ]
     return "\n".join(parts)
 

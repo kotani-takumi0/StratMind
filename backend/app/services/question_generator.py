@@ -133,9 +133,9 @@ def build_user_message(
             "num_questions_max": num_questions_max,
         },
         "instructions": {
-            "layer1": "BASE_QUESTIONS_LAYER1 を参考に、今回の案で特に弱そうな観点を1〜2つ選び、必要に応じて言い換えてください。",
-            "layer2": "similar_decision_cases の main_reason / tags から共通する懸念パターンを整理し、それを避けるための問いを1〜3個作ってください。",
-            "layer3": "current_proposal が過去ケースと比べて極端・特徴的な点を挙げ、その点を検証する問いを1〜2個作ってください。",
+            "layer1": "BASE_QUESTIONS_LAYER1 を参考に、今回の案で特に具体性が欠けている、または楽観的すぎる観点を1〜2つ選び、指摘してください。",
+            "layer2": "similar_decision_cases のうち、特に『rejected（不採用）』や『pending（保留）』の事例に注目してください。それらが失敗した原因（main_reason）と同じ落とし穴に、今回の案もハマりかけていないか？という意地悪な視点（Devil's Advocate）で、鋭い問いを1〜3個作ってください。「過去はこうだったが、今回は大丈夫か？」と迫る形が望ましいです。",
+            "layer3": "current_proposal が過去ケースと比べて『ここが極端に違う』または『ここが楽観的すぎる』点を特定し、その実現可能性を問う問いを1〜2個作ってください。",
         },
     }
 
